@@ -11,3 +11,30 @@
   - Virtual DOM
     - 유저인터렉션 과정에 비효율적인 렌더링이 발생할 수 있는데 그것을 최소화.
   - 데이터 사용의 편리함
+## 컴퍼넌트(Component)만들기
+  * component는 js또는 jsx파일로 생성한다.
+    - js파일의 소스에 jsx코드가 있을경우에는 통상 .jsx확장자로 생성하여 구분한다.
+    - component는 class방식과 hooks(함수형)방식 두가지가 있다.
+    ```javascript
+    // class방식
+    class 클래스명 extends Component {
+      constructor(props) {
+        super(props);
+        this.state = {
+          test: '',
+        };
+      }
+      render() {
+        return (<div></div>);
+      };
+    }
+    // hooks방식
+    import React, {useState} from 'react';
+    const 함수명 = () => {
+      const [count, setCount] = useState(0);
+
+      const 메서드 = () => {};
+
+      return (<div></div>);
+    };
+    ```
