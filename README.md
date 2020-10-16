@@ -34,7 +34,9 @@
       const [count, setCount] = useState(0);
 
       const 메서드 = () => {};
-
+           
+      // jsx코드를 return한다.
+      // jsx코드는 babel에의해서 React.createElement형식으로 바꿔서 실행시켜준다.
       return (<div></div>);
     };
     ```
