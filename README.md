@@ -79,9 +79,9 @@
     this.setState((prevState) => { return {count: prevState.count + 1}; });
     ```
 ## ref
-  * 해당 태그자체에 동작을 추가하고 싶을때 사용.
+  * 태그자체에 동작을 추가하고 싶을때 사용.
   ```javascript
-  // class 방식
+  // class 방식---------------------------------------
   state = {
     value: '',
   };
@@ -94,7 +94,30 @@
     return (
       <React.Fragment>
         <form onSubmit={this.onSubmit}>
-          <input ref={(c) => { this.input = c; }} type="number" value={this.state.value} />
+          <input ref={(c) => { this.input = c; }} type="number" onChange={} value={this.state.value} />
+          <button>입력!</button>
+        </form>
+      </React.Fragment>
+    );
+  }
+
+  // hooks(함수형) 방식---------------------------------
+  import React, {useState, useRef} from 'react';
+
+  const Aaaa = () => {
+    // state
+    const [value, setValue] = useState('');
+    const inputRef = useRef(null);
+
+    // method
+    const onSubmit = () => {
+      inputRef.current.focus();
+    };
+
+    return (
+      <React.Fragment>
+        <form onSubmit={onSubmit}>
+          <input ref={inputRef} type="number" onChange={} value={value} />
           <button>입력!</button>
         </form>
       </React.Fragment>
