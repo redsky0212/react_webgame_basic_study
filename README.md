@@ -60,6 +60,8 @@
   * class형식으로 개발할때 메서드함수는 화살표함수로 만든다.(this가 달라짐)
   * form태그에서는 onSubmit을 사용(개취)
   * render함수의 jsx에 ()연산자는 개취.
+  * setState로 상태를 변경할때 rendering이 이루어진다. 성능이슈를 잘 체크해야함
+    - render함수의 JSX부분에는 함수를 넣지않고 모두 밖으로 빼는게 맞음 왜냐하면 render가 이루어질때마다 jsx내부의 함수는 계속 새로 생성 되므로 성능이슈가 있음.
 ## setState의 함수형 사용 이유
   * state는 setState를 사용하여 상태를 변화(비동기) 시켜줘야 한다.
   * state는 항상 불변성을 유지해야함.
@@ -80,11 +82,14 @@
   * 해당 태그자체에 동작을 추가하고 싶을때 사용.
   ```javascript
   // class 방식
+  state = {
+    value: '',
+  };
   onSubmit = (e) => {
     // form의 submit이 이루어졌을때 input에 focus를 준다.
     this.input.focus();
   };
-  input; // ref로 연결된 input태그 객체
+  input; // ref로 연결된 input태그 DOM객체
   render() {
     return (
       <React.Fragment>
