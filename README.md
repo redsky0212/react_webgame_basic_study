@@ -76,3 +76,23 @@
     ```javascript
     this.setState((prevState) => { return {count: prevState.count + 1}; });
     ```
+## ref
+  * 해당 태그자체에 동작을 추가하고 싶을때 사용.
+  ```javascript
+  // class 방식
+  onSubmit = (e) => {
+    // form의 submit이 이루어졌을때 input에 focus를 준다.
+    this.input.focus();
+  };
+  input; // ref로 연결된 input태그 객체
+  render() {
+    return (
+      <React.Fragment>
+        <form onSubmit={this.onSubmit}>
+          <input ref={(c) => { this.input = c; }} type="number" value={this.state.value} />
+          <button>입력!</button>
+        </form>
+      </React.Fragment>
+    );
+  }
+  ```
