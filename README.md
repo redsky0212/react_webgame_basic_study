@@ -43,7 +43,7 @@
   * state설정
     - 컴퍼넌트의 화면에서 변경이 이루어지는 값들은 state라는 상태값으로 관리한다.
   * Fragment (React.Fragment, <>)
-    - 각 Component의 JSX부분에서 html첫 태그는 하나여야 하는 문제가 있다. 그래서 주로 &lt;div&gt;로 감싸주는 경우가 많은데 이럴때 Fragment를 사용하면 필요없는 div를 태그상에서 제거해준다.
+    - 각 Component의 JSX코드에서 html첫 태그는 하나여야 하는 문제가 있다. 그래서 주로 &lt;div&gt;로 감싸주는 경우가 많은데 이럴때 Fragment를 사용하면 필요없는 div를 태그상에서 제거해준다.
     - <>는 babel2에서부터 지원함. React.Fragment를 사용.
     ```html
     <React.Fragment>
@@ -56,3 +56,7 @@
      <div>{this.state.second}</div>
     </>
     ```
+## 기타 팁들
+  * class형식으로 개발할때 메서드함수는 화살표함수로 만든다.(this가 달라짐)
+  * form태그에서는 onSubmit을 사용(개취)
+  * render함수의 jsx에 ()연산자는 개취.
