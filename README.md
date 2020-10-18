@@ -45,3 +45,14 @@
   * Fragment (React.Fragment, <>)
     - 각 Component의 JSX부분에서 html첫 태그는 하나여야 하는 문제가 있다. 그래서 주로 &lt;div&gt;로 감싸주는 경우가 많은데 이럴때 Fragment를 사용하면 필요없는 div를 태그상에서 제거해준다.
     - <>는 babel2에서부터 지원함. React.Fragment를 사용.
+    ```html
+    <React.Fragment>
+     <div>{this.state.first}</div>
+     <div>{this.state.second}</div>
+    </React.Fragment>
+    // 또는 babel2부터 지원
+    <>
+     <div>{this.state.first}</div>
+     <div>{this.state.second}</div>
+    </>
+    ```
