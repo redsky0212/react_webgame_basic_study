@@ -60,3 +60,19 @@
   * class형식으로 개발할때 메서드함수는 화살표함수로 만든다.(this가 달라짐)
   * form태그에서는 onSubmit을 사용(개취)
   * render함수의 jsx에 ()연산자는 개취.
+## setState의 함수형 사용 이유
+  * state는 setState를 사용하여 상태를 변화(비동기) 시켜줘야 한다.
+  * state는 항상 불변성을 유지해야함.
+    - react는 state의 값들이 변화가 이뤄졌다는 것을 알아차려서 화면을 rendering하는데 setState를 연달아 사용할 경우 state의 값에 대한 오동작(비동기이기때문)이 생길 수 있다.
+    ```javascript
+    // 비동기 이기때문에 최종 count가 5라는 보장이 없다.
+    this.setState({count: 0});
+    this.setState({count: 4});
+    this.setState({count: 3});
+    this.setState({count: 2});
+    this.setState({count: 5});
+    ```
+    - 그래서 이전state값으로 새로운state값으로 오동작없이 넣으려면 함수형으로 사용해서 prev state값을 사용하여 값을 셋팅한다.
+    ```javascript
+    this.setState((prevState) => { return {count: prevState.count + 1}; });
+    ```
