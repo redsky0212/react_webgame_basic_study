@@ -42,3 +42,5 @@
     ```
   * state설정
     - 컴퍼넌트의 화면에서 변경이 이루어지는 값들은 state라는 상태값으로 관리한다.
+  * Fragment (React.Fragment, <>)
+    - <>는 babel2에서부터 지원함. React.Fragment를 사용.
