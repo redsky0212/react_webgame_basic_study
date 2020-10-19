@@ -133,9 +133,9 @@
 
 ## React개발을 위한 환경설정 및 웹팩 설치
   * js실행기인 node.js가 기본 설치 되어 있어야 한다.
-  * npm init : cmd창에서 프로젝트 폴더로 이동후 초기화 실행.
+  * npm init : cmd창에서 프로젝트 폴더로 이동후 프로젝트 초기화 실행.
   * react개발에 필요한 것들 설치.
-    - npm i react react-dom
-    - npm i -D webpack webpack-cli
+    - npm i react react-dom  // 리엑트 설치
+    - npm i -D webpack webpack-cli  // 웹팩설치 개발시에만 사용
   * 흩어져있는 파일들을 가공해주는 웹팩
   * js실행기 node.js위에
