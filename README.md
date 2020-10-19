@@ -137,5 +137,8 @@
   * react개발에 필요한 것들 설치.
     - npm i react react-dom  // 리엑트 설치
     - npm i -D webpack webpack-cli  // 웹팩설치 개발시에만 사용
-  * 루트에 webpack.config.js와 client.js(테스트를 위한 js파일)생성.
-  * 
+  * 루트에 webpack.config.js와 client.jsx(테스트를 위한 js파일)생성.
+  ```javascript
+  // webpack.config. js
+  module.exports = {}
+  ```
