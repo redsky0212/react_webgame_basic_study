@@ -130,7 +130,7 @@
   * hooks에서 state는 객체로 하나로묶어서 사용해도 되지만 바꾸지않는값은 없어질 수도 있으므로 분리해서 사용하는게 맞음.
   * render시 class방식은 전체 class를 다시 렌더링 하지 않지만 hooks방식은 함수 전체를 다시 렌더링한다. 이건 어쩔 수 없음.
   * state변경이 연달아 있을경우 react가 똑똑하게 계속 render는 하지않고 내부적으로 적절히 rendering함.
-
+>
 ## React개발을 위한 환경설정 및 웹팩 설치 (실무아님, react테스트를위한 구성)
   * js실행기인 node.js가 기본 설치 되어 있어야 한다.
   * npm init : cmd창에서 프로젝트 폴더로 이동후 프로젝트 초기화 실행.
@@ -141,4 +141,17 @@
   ```javascript
   // webpack.config. js
   module.exports = {}
+  // client.jsx
+  const React = require('react');
+  const ReactDom = require('react-dom');
+  ReactDom.render(<Comp></Comp>);
+  // index.html
+  <html>
+   <head>
+   </head>
+   <body>
+    <div id="root"></div>
+    <script src="./dist/app.js"></script>
+   </body>
+  </html>
   ```
