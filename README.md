@@ -137,23 +137,70 @@
   * react개발에 필요한 것들 설치.
     - npm i react react-dom  // 리엑트 설치
     - npm i -D webpack webpack-cli  // 웹팩설치 개발시에만 사용
-  * 루트에 webpack.config.js와 client.jsx(테스트를 위한 js파일)생성.
+  * 루트에 webpack.config.js와 client.jsx(테스트를 위한 js파일), index.html 생성.
   ```javascript
   // webpack.config. js
   module.exports = {}
   // client.jsx
   const React = require('react');
   const ReactDom = require('react-dom');
-  ReactDom.render(<Comp></Comp>);
+  ReactDom.render(<WordRelay />, document.querySelector('#root'));
   // index.html
   <html>
-   <head>
-   </head>
-   <body>
-    <div id="root"></div>
-    <script src="./dist/app.js"></script>
-   </body>
+    <head>
+      <meta charset="UTF-8" />
+      <title>끝말잇기</title>
+    </head>
+    <body>
+      <div id="root"></div>
+      <script src="./dist/app.js"></script>
+    </body>
   </html>
   ```
   * create-react-app등을 사용해서 설치하면 react의 자세한 환경내용을 모르므로 처음에는 이렇게 개별로 설치해서 적용해보는게 좋음.
+  * client.jsx파일에서 불러온 컴포넌트(WordRelay)는 따로 파일(WordRelay.jsx)을 만들어 불러온다.
+  ```javascript
+  // WordRelay.jsx
+  const React = require('react');
+  const { Component } = React;
+
+  class WordRelay extends React.Component {
+    state = {};
+
+    render() {
+      
+    }
+  }
+
+  module.exports = WordRelay;
+  ```
+    - 모듈 시스템으로 인해 파일로 많이 분리하고 필요한것만 불러와 넣을 수 있게 되었다.
+  * 분리된 js파일들을 index.html에서는 합쳐진 js파일로 불러오기 위해서는 webpack이 필요하다.
+  * webpack.config.js파일 설정 해보기(우선 첫 셋팅)
+  ```javascript
+  const path = require('path'); // node의 path조작
+
+  module.exports = {
+    name: 'wordrelay-setting',
+    mode: 'development',  // 실서비스: production
+    devtool: 'eval',  // 빠르게 하겠다는 의미
+    resolve: {
+      extensions: ['.js', '.jsx'],
+    },
+    // 입력: 중요
+    entry: {
+      // WordRelay.jsx는 client.jsx파일에서 불러오므로 webpack에서 알아차리기 때문에 넣을필요없음.
+      // 확장자는 resolve라는 옵션에서 extendsions네 적어주면 알아서 찾아줌.
+      app: ['./client'],
+    },
+    // 출력: 중요
+    output: {
+      path: path.join(__dirname, 'dist'), // 현재폴더경로에 dist에 내보냄.
+      filename: 'app.js',
+    },
+  };
+  ```
+    - webpack실행 명령어는 webpack (command라인 에러가 발생)(명령어 등록 해주거나 package.json에 script로 적어주거나 npx명령어로 사용.)
+      - npm run dev(script에 등록된 이름), 또는 npx webpack
+    - 현재까지는 에러 발생함.
   
