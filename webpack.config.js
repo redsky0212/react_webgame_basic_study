@@ -13,6 +13,16 @@ module.exports = {
      // 확장자는 resolve라는 옵션에서 extendsions네 적어주면 알아서 찾아줌.
     app: ['./client'],
   },
+  module: {
+    rules: [{
+      test: /\.jsx?/, // js, jsx파일에 룰을 적용하겠다는 의미
+      loader: 'babel-loader', // babel-loader의 룰
+      options: {
+        presets: ['@babel/preset-env', '@babel/preset-react'],
+        plugins: ['@babel/plugin-proposal-class-properties'], // 에러발생으로 추가 설치함.
+      },
+    }],
+  },
   // 출력: 중요
   output: {
     path: path.join(__dirname, 'dist'), // 현재폴더경로에 dist에 내보냄.

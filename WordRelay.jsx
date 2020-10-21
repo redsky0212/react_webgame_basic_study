@@ -2,10 +2,10 @@ const React = require('react');
 const { Component } = React;
 
 class WordRelay extends React.Component {
-  state = {};
+  state = { text: 'Hello Webpack!' };
 
   render() {
-    
+    return <h1>{this.state.text}</h1>;
   }
 }
 
