@@ -210,16 +210,16 @@
     },
   };
   ```
-    - webpack실행 명령어는 webpack (command라인 에러가 발생)(명령어 등록 해주거나 package.json에 script로 적어주거나 npx명령어로 사용.)
-      - npm run dev(script에 등록된 이름), 또는 npx webpack
-    - 현재까지는 에러 발생함.
-      - jsx를 읽으려면 로더가 필요하다는..., 그래서 babel을 설치하고 jsx관련 설정을 babel설정을 해줘야 한다.
-      - babel설치 : npm i -D @babel/core @babel/preset-env @babel/preset-react babel-loader
-        - (core: 바벨의 코어소스, preset-env: 브라우져판별하여 js소스를 변환해줌, preset-react: 리엑트관련소스 읽어줌., babel-loader: 바벨과웹팩을 연결)
-      - babel설치 후 webpack.config.js파일에 module옵션 추가.
-        - module: entry파일을 읽어서 module을 적용한 후 output에 뺀다로 생각하면 됨.
-      - 또 에러발생 에러내용에 보면 @babel/plugin-proposal-class-properties 추가 하라고 뜸... 그래서 또 설치
-        - npm i -D @babel/plugin-proposal-class-properties
-        - webpack.config.js파일 이 내용 추가
-          - plugins에 넣음.
+  * webpack실행 명령어는 webpack (command라인 에러가 발생)(명령어 등록 해주거나 package.json에 script로 적어주거나 npx명령어로 사용.)
+    - npm run dev(script에 등록된 이름), 또는 npx webpack
+  * 현재까지는 에러 발생함.
+    - jsx를 읽으려면 로더가 필요하다는..., 그래서 babel을 설치하고 jsx관련 설정을 babel설정을 해줘야 한다.
+    - babel설치 : npm i -D @babel/core @babel/preset-env @babel/preset-react babel-loader
+      - (core: 바벨의 코어소스, preset-env: 브라우져판별하여 js소스를 변환해줌, preset-react: 리엑트관련소스 읽어줌., babel-loader: 바벨과웹팩을 연결)
+    - babel설치 후 webpack.config.js파일에 module옵션 추가.
+      - module: entry파일을 읽어서 module을 적용한 후 output에 뺀다로 생각하면 됨.
+    - 또 에러발생 에러내용에 보면 @babel/plugin-proposal-class-properties 추가 하라고 뜸... 그래서 또 설치
+      - npm i -D @babel/plugin-proposal-class-properties
+      - webpack.config.js파일 이 내용 추가
+        - plugins에 넣음.
   
