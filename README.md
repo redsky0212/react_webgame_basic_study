@@ -279,7 +279,7 @@
     - npm run dev, npx webpack 명령어 실행
   * index.html파일을 생성
     - html파일에 dist에 생성된 js파일을 적용한 적용한 마크업 코딩.
-## @babel/preset-env와 plugins
+## 웹팩설정관련 @babel/preset-env와 plugins
   * preset은 plugins를 모아놓은 파일이다.
   * rules의 options의 presets에 좀더 구체적으로 옵션을 아래와 같이 셋팅 해줄 수 있다.
   ```javascript
@@ -294,4 +294,29 @@
       '@babel/preset-react'
     ],
   ]
+  ```
+  * 웹팩에 중요한 entry, module, output외에 하나더 plugins라는게 있다.
+  ```javascript
+  entry: {
+    app: ['./client'],
+  },
+  module: {
+    rules: [{
+      test: /\.jsx?/,
+      loader: 'babel-loader',
+      options: {
+        presets: ['@babel/preset-env', '@babel/preset-react'],
+        plugins: ['@babel/plugin-proposal-class-properties'],
+      },
+    }],
+  },
+  // 여기도 plugin이 들어갈 수 있음
+  // 확장 프로그램의 개념. 추가적 기능? 종류가 많음.
+  plugins: [
+    new webpack.LoaderOptionsPlugin({ debug: true }),
+  ],
+  output: {
+    path: path.join(__dirname, 'dist'),
+    filename: 'app.js',
+  },
   ```
