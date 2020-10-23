@@ -312,8 +312,9 @@
   },
   // 여기도 plugin이 들어갈 수 있음
   // 확장 프로그램의 개념. 추가적 기능? 종류가 많음.
+  // 수많은 플러그인이 있음.
   plugins: [
-    new webpack.LoaderOptionsPlugin({ debug: true }),
+    new webpack.LoaderOptionsPlugin({ debug: true }), // 위 options에 모두 debug:true를 넣는다는 의미
   ],
   output: {
     path: path.join(__dirname, 'dist'),
