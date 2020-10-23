@@ -223,3 +223,55 @@
       - webpack.config.js파일 이 내용 추가
         - plugins에 넣음.
 ## 웹팩빌드 다시 간단정리
+* nodejs 설치 되어있어야한다.
+* npm init
+* npm i react react-dom
+* npm i webpack webpack-cli
+* jsx를 읽기위한, 브라우져, 등등을 위한 babel설치
+  - npm i -D @babel/core @babel/preset-env @babel/preset-react babel-loader
+* root에 webpack.config.js파일 생성
+* webpack.config.js에 옵션 정리 시작
+```javascript
+  const path = require('path'); // node의 path조작
+
+  module.exports = {
+    name: 'wordrelay-setting',
+    mode: 'development',  // (운영): production
+    devtool: 'eval',  // (개발)빠르게 하겠다는 의미 'eval' , (운영)소스가리기 'hidden-source-map
+    resolve: {
+      extensions: ['.js', '.jsx'],
+    },
+    // 입력: 중요
+    entry: {
+      // WordRelay.jsx는 client.jsx파일에서 import하므로 webpack에서 알아차림. 때문에 넣을필요없음.
+      // 확장자는 resolve라는 옵션에서 extendsions네 적어주면 알아서 찾아줌.
+      app: ['./client'],
+    },
+    module: {
+      rules: [{
+        test: /\.jsx?/, // js, jsx파일에 룰을 적용하겠다는 의미
+        loader: 'babel-loader', // babel-loader의 룰을.
+        options: {
+          presets: ['@babel/preset-env', '@babel/preset-react'],  // babel의 옵션을 추가적용.
+          plugins: ['@babel/plugin-proposal-class-properties'], // 에러발생으로 추가 설치함.
+        },
+      }],
+    },
+    // 출력: 중요
+    output: {
+      path: path.join(__dirname, 'dist'), // 현재폴더경로에 dist에 내보냄.
+      filename: 'app.js',
+    },
+  };
+  ```
+  * package.json의 script부분에 webpack명령어 등록
+  ```javascript
+  "script": {
+    "div": "webpack",
+  }
+  ```
+  * client.jsx파일 생성(진입점 파일 생성)
+    - 물론 이름이 달라도 됨.
+  * 그 외 필요한 js, jsx파일을 생성하여 코딩작업 시작.
+    - 최신 js문법을 사용하여 필요한 코딩 시작
+    - Fragment사용법(<>), 모듈시스템 사용법(require, module.exports), 구조분해문법 
