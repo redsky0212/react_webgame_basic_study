@@ -222,4 +222,4 @@
       - npm i -D @babel/plugin-proposal-class-properties
       - webpack.config.js파일 이 내용 추가
         - plugins에 넣음.
-  
+## 웹팩빌드 다시 간단정리
