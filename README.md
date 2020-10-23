@@ -320,3 +320,4 @@
     filename: 'app.js',
   },
   ```
+  * webpack공식 문서에도 entry, output, Loaders(module), plugins, mode 이런게 가장 중요하나도 위에 나옴.
