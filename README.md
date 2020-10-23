@@ -287,7 +287,7 @@
     presets: [
       ['@babel/preset-env', {
         targets: {
-          browsers: ['> 5% in KR', 'last 2 chrome versions'],
+          browsers: ['> 5% in KR', 'last 2 chrome versions'], // 관련url(https://github.com/browserslist/browserslist#queries)
         },
         debug: true,
       }],
