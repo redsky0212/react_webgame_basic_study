@@ -279,3 +279,19 @@
     - npm run dev, npx webpack 명령어 실행
   * index.html파일을 생성
     - html파일에 dist에 생성된 js파일을 적용한 적용한 마크업 코딩.
+## @babel/preset-env와 plugins
+  * preset은 plugins를 모아놓은 파일이다.
+  * rules의 options의 presets에 좀더 구체적으로 옵션을 아래와 같이 셋팅 해줄 수 있다.
+  ```javascript
+  options: [
+    presets: [
+      ['@babel/preset-env', {
+        targets: {
+          browsers: ['> 5% in KR', 'last 2 chrome versions'],
+        },
+        debug: true,
+      }],
+      '@babel/preset-react'
+    ],
+  ]
+  ```
