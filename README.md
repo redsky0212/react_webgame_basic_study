@@ -275,3 +275,7 @@
   * 그 외 필요한 js, jsx파일을 생성하여 코딩작업 시작.
     - 최신 js문법을 사용하여 필요한 코딩 시작
     - Fragment사용법(<>), 모듈시스템 사용법(require, module.exports), 구조분해문법 
+  * 웹팩 빌드
+    - npm run dev, npx webpack 명령어 실행
+  * index.html파일을 생성
+    - html파일에 dist에 생성된 js파일을 적용한 적용한 마크업 코딩.
