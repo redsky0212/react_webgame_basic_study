@@ -438,3 +438,5 @@ output: {
   publicPath: '/dist/', // publicPath를 맞추어 webpack-dev-server와 서로 다른 부분을 맞춤.
 },
 ```
+## 끝말잇기 hooks로 전환해 보기
+* ..
