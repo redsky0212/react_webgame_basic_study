@@ -378,3 +378,63 @@ class WordRelay extends React.Component {
 
 module.exports = WordRelay;
 ```
+## 화면개발 코딩 작성 시 자동으로 리로딩 처리 해보기 (webpack-dev-server, hot-loader)
+* npm i -D react-hot-loader
+* npm i -D webpack-dev-server (nodemon같은거)
+* 설치 되었으면 package.json scripts부분을 수정한다.
+```javascript
+"scripts": {
+  "dev": "webpack-dev-server --hot",
+}
+```
+  - webpack-dev-server가 webpack.config.js 읽어서 빌드해주고 뒤쪽에서 항상 서버로 유지를 시켜준다.
+  - webpack-dev-server를 실행했을때 버전때문에 에러가 발생하였다. 그래서 아래와 같이 버전을 맞춰 다시 설치하고 실행하니 되었다.
+    - "webpack": "^4.30.0", "webpack-cli": "^3.3.0", "webpack-dev-server": "^3.3.1"
+    - 최신 버전에는 약간의 문제가 있는듯 하다.
+* 추가로 client.jsx를 아래와 같이 수정
+```javascript
+const React = require('react');
+const ReactDom = require('react-dom');
+const { hot } = require('react-hot-loader/root'); // hot을 불러와서
+
+const WordRelay = require('./WordRelay');
+
+const Hot = hot(WordRelay); // WordRelay를 연결시킨다.
+
+ReactDom.render(<Hot />, document.querySelector('#root'));
+```
+* 또 webpack.config.js도 아래부분에 plugin을 추가해준다.
+```javascript
+module: {
+    rules: [{
+      test: /\.jsx?/,
+      loader: 'babel-loader',
+      options: {
+        presets: [
+          ['@babel/preset-env', {
+            targets: {
+              browsers: ['> 5% in KR', 'last 2 chrome versions'],
+            },
+            debug: true,
+          }],
+          '@babel/preset-react'
+        ],
+        plugins: [
+          '@babel/plugin-proposal-class-properties',
+          'react-hot-loader/babel', // 리엑트 hot-loader를 연결한다.
+        ],
+      },
+    }],
+  },
+```
+* 또한 index.html에 script로딩한 app.js경로를 ./dist/app.js에서 ./app.js로 수정한다.
+  - 이부분은 webpack-dev-server가 실행하면서 빌드된 app.js를 읽지않고 따로 app.js를 만들어 읽는거 같음.
+  - 그래서 publicPath를 넣어서 경로를 맞출 수 있음.
+* publicPath맞추기
+```javascript
+output: {
+  path: path.join(__dirname, 'dist'),
+  filename: 'app.js',
+  publicPath: '/dist/', // publicPath를 맞추어 webpack-dev-server와 서로 다른 부분을 맞춤.
+},
+```

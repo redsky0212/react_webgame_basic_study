@@ -18,8 +18,19 @@ module.exports = {
       test: /\.jsx?/, // js, jsx파일에 룰을 적용하겠다는 의미
       loader: 'babel-loader', // babel-loader의 룰
       options: {
-        presets: ['@babel/preset-env', '@babel/preset-react'],
-        plugins: ['@babel/plugin-proposal-class-properties'], // 에러발생으로 추가 설치함.
+        presets: [
+          ['@babel/preset-env', {
+            targets: {
+              browsers: ['> 5% in KR', 'last 2 chrome versions'], // 관련url(https://github.com/browserslist/browserslist#queries)
+            },
+            debug: true,
+          }],
+          '@babel/preset-react'
+        ],
+        plugins: [
+          '@babel/plugin-proposal-class-properties', // 에러발생으로 추가 설치함.
+          'react-hot-loader/babel', // 리엑트 hot-loader를 연결한다.
+        ],
       },
     }],
   },
@@ -27,5 +38,6 @@ module.exports = {
   output: {
     path: path.join(__dirname, 'dist'), // 현재폴더경로에 dist에 내보냄.
     filename: 'app.js',
+    publicPath: '/dist/',
   },
 };
