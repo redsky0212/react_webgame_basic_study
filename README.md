@@ -174,7 +174,7 @@
 
   module.exports = WordRelay;
   ```
-    - 모듈 시스템으로 인해 파일로 많이 분리하고 필요한것만 불러와 넣을 수 있게 되었다.
+  * 모듈 시스템으로 인해 파일로 많이 분리하고 필요한것만 불러와 넣을 수 있게 되었다.
   * 분리된 js파일들을 index.html에서는 합쳐진 js파일로 불러오기 위해서는 webpack이 필요하다.
   * webpack.config.js파일 설정 해보기(우선 첫 셋팅)
   ```javascript
@@ -391,6 +391,7 @@ module.exports = WordRelay;
   - webpack-dev-server를 실행했을때 버전때문에 에러가 발생하였다. 그래서 아래와 같이 버전을 맞춰 다시 설치하고 실행하니 되었다.
     - "webpack": "^4.30.0", "webpack-cli": "^3.3.0", "webpack-dev-server": "^3.3.1"
     - 최신 버전에는 약간의 문제가 있는듯 하다.
+  - webpack-dev-server는 최신 공신문서를 확인하여 hot-loader를 사용할 것인지, 아니면 사용방법을 그때그때 따라서 진행해야할거같음.
 * 추가로 client.jsx를 아래와 같이 수정
 ```javascript
 const React = require('react');
@@ -439,4 +440,46 @@ output: {
 },
 ```
 ## 끝말잇기 hooks로 전환해 보기
-* ..
+* useState, useRef등 사용법 익힘
+```javascript
+const React = require('react');
+const { useState, useRef } = React;
+
+const WordRelayHooks = () => {
+  const [word, setWord] = useState('레드스카이');
+  const [value, setValue] = useState('');
+  const [result, setResult] = useState('');
+  const inputRef = useRef(null);
+
+  const onSubmitForm = (e) => {
+    e.preventDefault();
+    if (word[word.length - 1] === value[0]) {
+      setResult('딩동댕');
+      setWord(value);
+      setValue('');
+      inputRef.current.focus();
+    } else {
+      setResult('땡');
+      setValue('');
+      inputRef.current.focus();
+    }
+  };
+
+  const onChangeInput = (e) => {
+    setValue( e.target.value );
+  };
+
+  return (
+    <>
+      <div>{word}</div>
+      <form onSubmit={onSubmitForm}>
+        <input ref={inputRef} value={value} onChange={onChangeInput} />
+        <button>클릭!</button>
+      </form>
+      <div>{result}</div>
+    </>
+  );
+};
+
+module.exports = WordRelayHooks;
+```
