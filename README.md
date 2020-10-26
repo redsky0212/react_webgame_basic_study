@@ -488,3 +488,13 @@ module.exports = WordRelayHooks;
 * jsx에 className, htmlFor적용하는법
   - jsx소스내에 class대신 className을 사용한다.
   - jsx소스내에 for속성 대신 htmlFor를 사용한다.
+
+## import와 require 비교
+* 많은 소스들이 require대신 import를 쓴다.
+  - nodejs의 모듈시스템 require. module.exports.
+  - es2015문법 import. export default.
+  - import, require는 서로 호환이 됨. 어떤걸 써도 상관없음.
+  - nodejs는 require만 지원한다.
+
+## 리엑트 반복문(map)
+* ..
