@@ -29,7 +29,7 @@ const WordRelayHooks = () => {
     <>
       <div>{word}</div>
       <form onSubmit={onSubmitForm}>
-        <input ref={inputRef} value={value} onChange={onChangeInput} />
+        <input className="aaa" ref={inputRef} value={value} onChange={onChangeInput} />
         <button>클릭!</button>
       </form>
       <div>{result}</div>

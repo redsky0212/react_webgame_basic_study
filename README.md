@@ -475,7 +475,7 @@ const WordRelayHooks = () => {
     <>
       <div>{word}</div>
       <form onSubmit={onSubmitForm}>
-        <input ref={inputRef} value={value} onChange={onChangeInput} />
+        <input className="aaa" ref={inputRef} value={value} onChange={onChangeInput} />
         <button>클릭!</button>
       </form>
       <div>{result}</div>
@@ -485,3 +485,6 @@ const WordRelayHooks = () => {
 
 module.exports = WordRelayHooks;
 ```
+* jsx에 className, htmlFor적용하는법
+  - jsx소스내에 class대신 className을 사용한다.
+  - jsx소스내에 for속성 대신 htmlFor를 사용한다.
