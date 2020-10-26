@@ -441,6 +441,8 @@ output: {
 ```
 ## 끝말잇기 hooks로 전환해 보기
 * useState, useRef등 사용법 익힘
+* 콘솔 로그에 보면 [HMR], [WDS] 이 부분에 대하여 익힘
+  - [HMR]핫모듈리로드, [WDS]웹팩데브서버 라는 뜻..
 ```javascript
 const React = require('react');
 const { useState, useRef } = React;
