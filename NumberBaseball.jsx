@@ -99,13 +99,6 @@ class NumberBaseball extends Component {
             );
           })}
         </ul>
-        <ul>
-          {['like', 'like', 'like', 'like'].map(() => {
-            return (
-              <li>like</li>
-            );
-          })}
-        </ul>
       </>
     );
   }
