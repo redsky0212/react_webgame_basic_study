@@ -1,7 +1,3 @@
-// const React = require('react');
-// const { Component, createRef } = React;
-// const Try = require('./Try');
-
 import React, { Component, createRef } from 'react';
 import Try from './Try';
 
@@ -104,5 +100,4 @@ class NumberBaseball extends Component {
   }
 }
 
-// module.exports = NumberBaseball;
 export default NumberBaseball;

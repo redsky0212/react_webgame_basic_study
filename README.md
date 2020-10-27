@@ -514,7 +514,9 @@ module.exports = WordRelayHooks;
 ## 컴포넌트를 분리, props
 * 반복문, 조건문 부분에서 컴포넌트를 분리해주는게 좋다.
 * NumberBaseball.jsx 클래스 방식의 코딩 예제와 Try컴포넌트로 분리한 예제
+  - 분리하면 좋은점 (가독성좋음, 재사용성좋음, 성능최적화에 좋음)
 ```javascript
+// NumberBaseball.jsx 컴포넌트 ====================================
 import React, { Component, createRef } from 'react';
 import Try from './Try';
 
@@ -618,4 +620,21 @@ class NumberBaseball extends Component {
 }
 
 export default NumberBaseball;
+
+// Try.jsx 컴포넌트 ====================================
+import React, { Component } from 'react';
+
+class Try extends Component {
+  render() {
+    const { tryInfo } = this.props;
+    return (
+      <li>
+        <div>{tryInfo.try}</div>
+        <div>{tryInfo.result}</div>
+      </li>
+    );
+  }
+}
+
+export default Try;
 ```
