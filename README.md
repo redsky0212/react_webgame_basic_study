@@ -516,6 +516,7 @@ module.exports = WordRelayHooks;
 * NumberBaseball.jsx 클래스 방식의 코딩 예제와 Try컴포넌트로 분리한 예제
   - 분리하면 좋은점 (가독성좋음, 재사용성좋음, 성능최적화에 좋음)
   - 분리한 컴포넌트에는 부모컴포넌트에서 자식컴포넌트로 props로 넘겨줘야한다.
+  - class방식일때 createRef를 사용하면 ref의 current로 hooks방식과 같이 사용할 수 있다.
 ```javascript
 // NumberBaseball.jsx 컴포넌트 ====================================
 import React, { Component, createRef } from 'react';
