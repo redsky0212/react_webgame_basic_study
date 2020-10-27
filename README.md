@@ -639,3 +639,6 @@ class Try extends Component {
 
 export default Try;
 ```
+
+## 주석처리와 메서드 바인딩 방법
+* 주석 : {/**/}
