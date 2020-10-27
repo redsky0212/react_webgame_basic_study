@@ -642,3 +642,23 @@ export default Try;
 
 ## 주석처리와 메서드 바인딩 방법
 * 주석 : {/**/}
+* class방식에서 메서드에 화살표 함수를 사용하지 않을경우 예전방법
+```javascript
+class Aaa extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {};
+    this.onChange = this.onChange.bind(this); // this를 바인드해준다.
+  }
+  
+  onChange() {
+    // this가 달라짐
+    // constructor에서 bind해줬기때문에 this를 사용할 수 있다.
+    // 따라서 화살표 함수로 사용하는게 편함.
+  }
+
+  render() {
+    return (<div></div>);
+  }
+}
+```
