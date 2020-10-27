@@ -497,7 +497,7 @@ module.exports = WordRelayHooks;
   - nodejs는 require만 지원한다.
 
 ## 리엑트 반복문(map)
-* 숫자야구로 class를 만든다.
+* 숫자야구로 class 형식으로 만든다.
   - jsx에서는 속성은 카멜표기법으로 표현한다.
   - input에는 value, onChange는 셋트이다.
   - react에서 import와 require를 혼용해서 사용하니 에러가 발생하였다. 한가지만 사용하도록하자.
@@ -512,9 +512,10 @@ module.exports = WordRelayHooks;
 ```
 
 ## 컴포넌트를 분리, props
-* 반복문, 조건문 부분에서 컴포넌트를 분리해주는게 좋다.
+* 보통 반복문, 조건문 부분에서 컴포넌트를 분리를 많이 해준다.
 * NumberBaseball.jsx 클래스 방식의 코딩 예제와 Try컴포넌트로 분리한 예제
   - 분리하면 좋은점 (가독성좋음, 재사용성좋음, 성능최적화에 좋음)
+  - 분리한 컴포넌트에는 부모컴포넌트에서 자식컴포넌트로 props로 넘겨줘야한다.
 ```javascript
 // NumberBaseball.jsx 컴포넌트 ====================================
 import React, { Component, createRef } from 'react';
