@@ -1,5 +1,7 @@
-const React = require('react');
-const { Component } = React;
+// const React = require('react');
+// const { Component } = React;
+import React, {Component} from 'react';
+import WordRelayHooks from './WordRelayHooks';
 
 class WordRelay extends React.Component {
   state = {
@@ -43,9 +45,17 @@ class WordRelay extends React.Component {
           <button>클릭!</button>
         </form>
     <div>{this.state.result}</div>
+    <ul>
+          {['like', 'like', 'like', 'like'].map(() => {
+            return (
+              <li>like</li>
+            );
+          })}
+        </ul>
       </>
     );
   }
 }
 
-module.exports = WordRelay;
+// module.exports = WordRelay;
+export default WordRelay;

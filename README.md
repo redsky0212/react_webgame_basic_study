@@ -497,4 +497,15 @@ module.exports = WordRelayHooks;
   - nodejs는 require만 지원한다.
 
 ## 리엑트 반복문(map)
-* ..
+* 숫자야구로 class를 만든다.
+  - jsx에서는 속성은 카멜표기법으로 표현한다.
+  - input에는 value, onChange는 셋트이다.
+  - react에서 import와 require를 혼용해서 사용하니 에러가 발생하였다. 한가지만 사용하도록하자.
+* map반복문 사용 예제
+```javascript
+['사과', '배', '바나나', '포도', '귤', '감'].map((v) => {
+  return (
+    <li>{v}</li>
+  );
+});
+```

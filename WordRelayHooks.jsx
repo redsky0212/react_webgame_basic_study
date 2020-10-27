@@ -1,5 +1,6 @@
-const React = require('react');
-const { useState, useRef } = React;
+// const React = require('react');
+// const { useState, useRef } = React;
+import React, {useState, useRef} from 'react';
 
 const WordRelayHooks = () => {
   const [word, setWord] = useState('레드스카이');
@@ -33,8 +34,16 @@ const WordRelayHooks = () => {
         <button>클릭!</button>
       </form>
       <div>{result}</div>
+      <ul>
+          {['like', 'like', 'like', 'like'].map(() => {
+            return (
+              <li>like</li>
+            );
+          })}
+        </ul>
     </>
   );
 };
 
-module.exports = WordRelayHooks;
+// module.exports = WordRelayHooks;
+export default WordRelayHooks;
