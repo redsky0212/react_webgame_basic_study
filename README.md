@@ -665,4 +665,173 @@ class Aaa extends Component {
 ```
 
 ## NumberBaseball Hooks방식으로 전환해보기
-* ..
+```javascript
+import React, {useRef, useState} from 'react';
+import Try from './Try';
+
+function getNumbers() { // 숫자 네 개를 겹치지 않고 랜덤하게 뽑는 함수
+  const candidate = [1,2,3,4,5,6,7,8,9];
+  const array = [];
+  for (let i = 0; i < 4; i += 1) {
+    const chosen = candidate.splice(Math.floor(Math.random() * (9 - i)), 1)[0];
+    array.push(chosen);
+  }
+  return array;
+}
+
+const NumberBaseballHooks = () => {
+  const [result, setResult] = useState('');
+  const [value, setValue] = useState('');
+  const [answer, setAnswer] = useState(getNumbers());
+  const [tries, setTries] = useState([]);
+  const inputRef = useRef(null);
+
+  const onSubmitForm = (e) => {
+    e.preventDefault();
+    if (value === answer.join('')) {
+      setResult('홈런!');
+      setTries((prevTries) => {
+        return [...prevTries, { try: value, result: '홈런!' }];
+      });
+      alert('게임을 다시 시작합니다!');
+      setValue('');
+      setAnswer(getNumbers());
+      setTries([]);
+      
+      inputRef.current.focus();
+    } else { // 답 틀렸으면
+      const answerArray = value.split('').map((v) => parseInt(v));
+      let strike = 0;
+      let ball = 0;
+      if (tries.length >= 9) { // 10번 이상 틀렸을 때
+        setResult(`10번 넘게 틀려서 실패! 답은 ${answer.join(',')}였습니다!`);
+        alert('게임을 다시 시작합니다!');
+        setValue('');
+        setAnswer(getNumbers());
+        setTries([]);
+        inputRef.current.focus();
+      } else {
+        for (let i = 0; i < 4; i += 1) {
+          if (answerArray[i] === answer[i]) {
+            strike += 1;
+          } else if (answer.includes(answerArray[i])) {
+            ball += 1;
+          }
+        }
+        setTries((prevTries) => {
+          return [...prevTries, { try: value, result: `${strike} 스트라이크, ${ball} 볼입니다`}];
+        });
+        setValue('');
+        inputRef.current.focus();
+      }
+    }
+  };
+
+  const onChangeInput = (e) => {
+    setValue(e.target.value);
+  };
+
+  return (
+    <>
+      <h1>{result}</h1>
+      <form onSubmit={onSubmitForm}>
+        <input ref={inputRef} maxLength={4} value={value} onChange={onChangeInput} />
+      </form>
+      <div>시도: {tries.length}</div>
+      <ul>
+        {tries.map((v, i) => {
+          return (
+            <Try key={`${i + 1}차 시도 :`} tryInfo={v} />
+          );
+        })}
+      </ul>
+    </>
+  );
+};
+
+export default NumberBaseballHooks;
+```
+
+## React Devtools
+* 크롭 웹스토어에서 react devtools를 다운 받아 설치한다.
+* redux devtools도 설치한다.
+
+## shouldComponentUpdate(성능최적화 방법중 하나)
+* state의 변화가 생기면 render가 실행되므로 성능 최적화가 필요하다.
+* state의 변화가 생겼는지 아닌지를 react가 멍청하기때문에 shouldComponentUpdate에서 명시해주는 방법을 사용할때도 있다.
+```javascript
+class Test extends Component {
+  state = {
+    counter: 0,
+  };
+  shouldComponentUpdate(nextProps, nextState, nextContext) {
+    if (this.state.counter !== nextState.counter) {
+      return true;  // 값의 변화가 생겼으므로 렌더링한다.
+    }
+    return false; // 값의 변화가 없으므로 렌더링 안한다.
+  }
+  render() {
+    return (<div></div>);
+  }
+}
+```
+
+## PureComponent와 React.memo(성능최적화의 또다른방법)
+* class방식일때는 PureComponent를 사용하여 최소한의 성능최적화를 할 수 있다.
+* PureComponent는 불변성을 유지하지않고 값을 넣으면 알아차리지 못한다.
+```javascript
+class Test extends PureComponent {
+  state = {
+    counter: 0,
+    string: 'hello',
+    number: 1,
+    object: {}, // 하지만 object, array는 PureComponent도 어려워 한다.
+    arrar: [],  // 예를들어 array에 push로 값을 넣으면 PureComponent는 state의 변화를 알지 못한다.
+  };
+  
+  render() {
+    return (<div></div>);
+  }
+}
+```
+* Hooks방식일때는 React.memo를 사용한다.
+```javascript
+const Test = React.memo(() => {
+  const [counter, setCounter] = useState(0);
+  const [string, setString] = useState('hello');
+  const [number, setNumber] = useState(1);
+  const [object, setObject] = useState({});
+  const [array, setArray] = useState([]);
+  
+  render() {
+    return (<div></div>);
+  }
+});
+```
+* 상황에 따라 shouldComponentUpdate, PureComponent, React.memo를 적절히 사용해야한다.
+* 부모가 PureComponent이면 자식에도 적용해서 최적화를 할 수 있다.
+
+## React.createRef
+* class방식일때 ref적용할때 hooks방식과 current부분이 다른부분이 있었다.
+  - class일때는 : this.inputRef.focus();
+  - hooks일때는 : inputRef.current.focus();
+* 이럴때 createRef를 사용하면 class방식일때 hooks방식과 같이 적용할 수 있다.
+  - 통일성 유지
+```javascript
+import React, {createRef} from 'react';
+class Test extends Component{
+
+  inputRef = createRef();
+
+  onSubmit = () => {
+    this.inputRef.current.focus();
+  }
+
+  render() {
+    return (
+      <input ref={this.inputRef} />
+    );
+  }
+}
+```
+* ref의 예전방식도 함수여서 좀 더 디테일한 조정을 할 수 있다.
