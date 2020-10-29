@@ -17,7 +17,7 @@
 import React from 'react';
 import ReactDom from 'react-dom';
 import { hot } from 'react-hot-loader/root'; // hot을 불러와서
-import WordRelayHooks from './NumberBaseballHooks';
+import WordRelayHooks from './ResponseCheckHooks';
 
 const Hot = hot(WordRelayHooks); // WordRelay를 연결시킨다.
 

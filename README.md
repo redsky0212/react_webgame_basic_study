@@ -835,3 +835,234 @@ class Test extends Component{
 }
 ```
 * ref의 예전방식도 함수여서 좀 더 디테일한 조정을 할 수 있다.
+
+## props와 state 연결
+* props는 자식에서 값을 바꾸면 안됨.
+  - 경우에 따라 props를 바꾸고자 할때는 props를 state에 넣어주고 state를 바꾼다.
+  ```javascript
+  const Try = memo(({tryInfo}) => {
+    const [result, setResult] = setState(tryInfo.result); // 부모로부터 받은 props를 state에 넣어줌.
+    const onClick = () => {
+      setResult('1');
+    };
+    return (
+      <li>
+        <div>{tryInfo.try}</div>
+        <div onClick={onClick}>{result}</div>
+      </li>
+    );
+  });
+  ```
+* class방식일때 constructor에서 props를 좀 더 필터링을 하거나 디테일 조작을 하여 state에 넣어줄 수도있다.
+* 부모자식간에는 props로 넘겨주는데 depth가 길어지면 복잡해지므로 조금 쉽게 전달하는 방식은 context api(공부필요)를 사용하면 됨.
+
+## React 조건문(반응속도체크 ResponseCheck)
+* css, style은 client.jsx에 보통 하는 방식 똑같이 넣어주면 된다.
+* react의 render안에는 for, if를 사용하지 못한다.
+  - 그래서 사용할 수 있는 방법 설명
+  - 삼항연산자 사용.
+    - Array의 reduce는 합계를 나는 메서드 인데 array의 값이 없을때는 에러가 남. 그래서 없을때는 그리지 않게 하기 위해 조건문을 넣는다.
+    - jsx에서는 아무것도 안한다... null 로 한다.
+  ```javascript
+  render() {
+    const { state, message } = this.state;
+    return (
+      <>
+        <div
+          id="screen"
+          className={state}
+          onClick={this.onClickScreen}
+        >
+          {message}
+        </div>
+        {result.length === 0
+        ? null
+        : <div>평균 시간: {result.reduce((a, c) => a + c) / result.length}ms</div>
+          <button onClick={this.onReset}>리셋</button>
+        }
+      </>
+    )
+  }
+  ```
+  - 삼항연산자를 render의 return안에 쓰면 좀 지저분하다. react의 단점.
+    - 그래서 삼항연산자를 함수로 빼서 쓰는게 보기가 더 좋음.
+    - 사실은 함수보다 컴포넌트로 따로 빼서 분리하는게 더 좋음. (파일이 많아져서 복잡해질 수는 있지만...)
+    ```javascript
+    renderAverage = () => {
+      const {result} = this.state;
+      return result.length === 0
+        ? null
+        : <>
+          <div>평균 시간: {result.reduce((a, c) => a + c) / result.length}ms</div>
+          <button onClick={this.onReset}>리셋</button>
+        </>
+    };
+    render() {
+      const { state, message } = this.state;
+      return (
+        <>
+          <div
+            id="screen"
+            className={state}
+            onClick={this.onClickScreen}
+          >
+            {message}
+          </div>
+          {this.renderAverage()}
+        </>
+      )
+    }
+    ```
+## setTimeout 넣어 반응속도체크
+* state, props등들은 처음부터 구조분해해서 가져와 사용하는게 좋음.
+* 반응속도체크 컴포넌트 코딩...(ResponseCheck.jsx참조)
+```javascript
+import React, { Component, createRef } from 'react';
+
+class ResponseCheck extends Component {
+  state = {
+    state: 'waiting',
+    message: '클릭해서 시작하세요.',
+    result: [],
+  };
+
+  timeout = createRef();
+  startTime = createRef();
+  endTime = createRef();
+
+  onClickScreen = () => {
+    const { state } = this.state;
+    if (state === 'waiting') {
+      this.timeout = setTimeout(() => {
+        this.setState({
+          state: 'now',
+          message: '지금 클릭',
+        });
+        this.startTime.current = new Date();
+      }, Math.floor(Math.random() * 1000) + 2000); // 2초~3초 랜덤
+      this.setState({
+        state: 'ready',
+        message: '초록색이 되면 클릭하세요.',
+      });
+    } else if (state === 'ready') { // 성급하게 클릭
+      clearTimeout(this.timeout);
+      this.setState({
+        state: 'waiting',
+        message: '너무 성급하시군요! 초록색이 된 후에 클릭하세요.',
+      });
+    } else if (state === 'now') { // 반응속도 체크
+      this.endTime.current = new Date();
+      this.setState((prevState) => {
+        return {
+          state: 'waiting',
+          message: '클릭해서 시작하세요.',
+          result: [...prevState.result, this.endTime.current - this.startTime.current],
+        };
+      });
+    }
+  };
+
+  onReset = () => {
+    this.setState({
+      result: [],
+    });
+  };
+
+  renderAverage = () => {
+    const {result} = this.state;
+    return result.length === 0
+      ? null
+      : <>
+        <div>평균 시간: {result.reduce((a, c) => a + c) / result.length}ms</div>
+        <button onClick={this.onReset}>리셋</button>
+      </>
+  };
+  render() {
+    const { state, message } = this.state;
+    return (
+      <>
+        <div
+          id="screen"
+          className={state}
+          onClick={this.onClickScreen}
+        >
+          {message}
+        </div>
+        {this.renderAverage()}
+      </>
+    )
+  }
+}
+export default ResponseCheck;
+```
+## 성능체크
+* 리셋버튼 클릭시 위쪽 색깔부분도 렌더링 된다.
+  - 이런경우에는 보통 그냥 넘어가는데 이것도 렌더링을 피해서 최적화 하고자 할때는 컴포넌트로 분리해서 작업한다.
+* Hooks컴포넌트는 렌더링 될때 함수 전체가 다시 렌더링 되므로 무건운 공통함수를 콜 하는경우에는 문제가 될 수도있다.
+  - 이럴경우에는 useMemo, useCallback, useEffect등을 이용하여 처리 할 수 있다.(뒤쪽에서 공부할꺼임)
+
+## 반응속도체크 컴포넌트 Hooks로 전환
+* Hooks방식에서 일반 변수는 useRef로 선언해서 사용할 수 있다.
+  - jsx의 태그 DOM에 접근할때 사용, 일반 변수 선언할때 사용. 두가지로 사용할 수 있다.
+  - `중요` : `그럼 state와 ref로 선언한것의 차이는 state는 렌더링이 되지만 ref로 선언한것은 렌더링 되지 않으므로 화면에 영향을 주지 않는 변수는 ref로 선언해서 사용하는게 좋다.`
+  - ref로 선언한것은 항상 current써주는거 잊지말자.
+```javascript
+import React, { useState, useRef } from 'react';
+
+const ResponseCheck = () => {
+  const [state, setState] = useState('waiting');
+  const [message, setMessage] = useState('클릭해서 시작하세요.');
+  const [result, setResult] = useState([]);
+  const timeout = useRef(null);
+  const startTime = useRef(0);
+  const endTime = useRef(0);
+
+  const onClickScreen = () => {
+    if (state === 'waiting') {
+      timeout.current = setTimeout(() => {
+        setState('now');
+        setMessage('지금 클릭');
+        startTime.current = new Date();
+      }, Math.floor(Math.random() * 1000) + 2000); // 2초~3초 랜덤
+      setState('ready');
+      setMessage('초록색이 되면 클릭하세요.');
+    } else if (state === 'ready') { // 성급하게 클릭
+      clearTimeout(timeout.current);
+      setState('waiting');
+      setMessage('너무 성급하시군요! 초록색이 된 후에 클릭하세요.');
+    } else if (state === 'now') { // 반응속도 체크
+      endTime.current = new Date();
+      setState('waiting');
+      setMessage('클릭해서 시작하세요.');
+      setResult((prevResult) => {
+        return [...prevResult, endTime.current - startTime.current];
+      });
+    }
+  };
+  const onReset = () => {
+    setResult([]);
+  };
+
+  const renderAverage = () => {
+    return result.length === 0
+      ? null
+      : <>
+        <div>평균 시간: {result.reduce((a, c) => a + c) / result.length}ms</div>
+        <button onClick={onReset}>리셋</button>
+      </>
+  };
+  return (
+    <>
+      <div
+        id="screen"
+        className={state}
+        onClick={onClickScreen}
+      >
+        {message}
+      </div>
+      {renderAverage()}
+    </>
+  );
+};
+export default ResponseCheck;
+```
