@@ -1066,3 +1066,154 @@ const ResponseCheck = () => {
 };
 export default ResponseCheck;
 ```
+
+## return 안에서 for와 if 쓰기
+* return안에 for, if를 쓰면 리엑트는 좀 지저분하다.
+  - jsx안에 { }를 이용하여 `즉시실행함수`를 사용하여 반복문,조건문 js코딩을 하는 방법
+    - 이 방법 보다는 그냥 함수로 빼던지 자식컴포넌트로 분리하는게 더 좋음.(성능문제도 있고...)
+  ```javascript
+  return (
+    <>
+      <div
+        id="screen"
+        className={state}
+        onClick={onClickScreen}
+      >
+        {message}
+      </div>
+      {/*즉시실행함수*/}
+      {(() => {
+        if (result.length === 0) {
+          return null;
+        } else {
+          return <>
+            <div>평균 시간: {result.reduce((a, c) => a + c) / result.length}ms</div>
+            <button onClick={this.onReset}>리셋</button>
+          </>
+        }
+      })()}
+    </>
+  );
+  ```
+
+## 리엑트 라이프사이클 소개(가위,바위,보 게임)
+* 리액트17부터는 componentWillMount, componentWillUpdate, componentWillReceiveProps 비추천.
+  
+  ■ 컴포넌트가 처음 실행될때(mount) 순서
+  1. context, defaultProps, state 저장
+  2. componentWillMount호출
+      - `mount진행중이므로 props, state를 여기서 변경하면 안됨.`
+      - `DOM에 접근 불가능` 
+  3. render실행 DOM에 부착
+  4. DOM에 mount완료 후 componentDidMount 호출.
+      - `DOM에 접근 가능.`
+
+  ■ props가 업데이트될 때 순서 (첫번째 인자는 update이전의 props)
+  1. componentWillReceiveProps
+  2. shouldComponentUpdate
+      - `업데이트되기 전 이므로 return false하면 render를 하지 않는다.`
+      - `그래서 이 함수에서 성능최적화를 하여 쓸데없는 update를 걸러낸다.`
+  3. componentWillUpdate
+      - `state를 변경하면 안됨. 아직 props가 업데이트 되지 않았는데 state를 변경하면 또반복되므로.`
+  4. 업데이트완료 후 render
+  5. componentDidUpdate
+      - `DOM에 접근 가능.`
+
+  ■ state가 업데이트될 때 순서(componentWillReceiveProps는 호출안됨, 두번째 인자 state)
+  1. shouldComponentUpdate
+  2. componentWillUpdate
+  3. render
+  4. componentDidUpdate
+
+  ■ unmount될때
+  1. componentWillUnmount
+
+  ■ Error났을때
+  1. componentDidCatch
+      - `에러가 발생했을때 호출됨. 에러로깅으로 사용할 수 있음.`
+      - `최상위 컴포넌트에 한 번만 넣어주면 됨.`
+
+  ■ getDerivedStateFromProps (render되기전에 호출)
+    - 새롭게 바뀐 props를 state에 넣어주고 싶을때 사용.
+    - 다른 생명주기와 달리 static을 필요로 한다. 또한 내부에서 this를 사용하지 못함.
+    ```javascript
+    static getDerivedStateFromProps(nextProps, prevState) {
+      console.log("getDerivedStateFromProps");
+      if (nextProps.color !== prevState.color) {
+        return { color: nextProps.color };
+      }
+      return null;
+    }
+    ```
+
+  ■ getSnapshotBeforeUpdate
+    - 컴포넌트 변화가 일어나기 전 DOM을 가져와....
+```javascript
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+
+export default class Basic extends Component {
+  static propTypes = {
+    name: PropTypes.string.isRequired,
+    birth: PropTypes.number.isRequired,
+    lang: PropTypes.string,
+  };
+
+  static defaultProps = {
+    lang: 'Javascript',
+  };
+
+  static contextTypes = {
+    router: PropTypes.object.isRequired,
+  };
+
+  state = {
+    hidden: false,
+  };
+
+  componentWillMount() {
+    console.log('componentWillMount');
+  }
+
+  componentDidMount() {
+    console.log('componentDidMount');
+  }
+
+  componentWillReceiveProps(nextProps) {
+    console.log('componentWillReceiveProps');
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    console.log('shouldComponentUpdate');
+    return true / false;
+  }
+
+  componentWillUpdate(nextProps, nextState) {
+    console.log('componentWillUpdate');
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    console.log('componentDidUpdate');
+  }
+
+  componentWillUnmount() {
+    console.log('componentWillUnmount');
+  }
+
+  onClickButton = () => {
+    this.setState({ hidden: true });
+    this.refs.hide.disabled = true;
+  }
+
+  render() {
+    return (
+      <div>
+        <span>저는 {this.props.lang} 전문 {this.props.name}입니다!</span>
+        {!this.state.hidden && <span>{this.props.birth}년에 태어났습니다.</span>}
+        <button onClick={this.onClickButton} ref="hide">숨기기</button>
+        <button onClick={this.context.router.goBack}>뒤로</button>
+      </div>
+    );
+  }
+}
+```
