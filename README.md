@@ -1246,6 +1246,7 @@ export default class Basic extends Component {
 ```
 ## 가위 바위 보 게임 만들기
 * 비동기 함수 안에서 바깥쪽 함수,변수를 사용하면 클로저 됨.
+* componentDidMount 이후 componentWillUnmount는 자식 컴포넌트일때 매우 중요.
 ```javascript
 // RSP.jsx
 import React, { Component } from 'react';
@@ -1354,4 +1355,42 @@ class RSP extends Component {
 }
 export default RSP;
 
+```
+
+## 고차함수
+* jsx부분에 함수호출내부에 함수를 호출하는부분이 있다면 바깥으로 빼서 적용한다.
+```javascript
+  onClickBtn = (choice) => {
+    //event.preventDefault(); event를 쓸 수 없음.
+  }
+  render() {
+    const { result, score, imgCoord } = this.state;
+    return (
+      <>
+        <div id="computer" style={{ background: `url(https://en.pimg.jp/023/182/267/1/23182267.jpg) ${imgCoord} 0` }} />
+        <div>
+          <button id="rock" className="btn" onClick={(event) => {this.onClickBtn('바위')}}>바위</button>
+        </div>
+        <div>{result}</div>
+        <div>현재 {score}점</div>
+      </>
+    );
+  }
+  // 수정코드
+  onClickBtn = (choice) => (event) => {
+    event.preventDefault();
+  }
+  render() {
+    const { result, score, imgCoord } = this.state;
+    return (
+      <>
+        <div id="computer" style={{ background: `url(https://en.pimg.jp/023/182/267/1/23182267.jpg) ${imgCoord} 0` }} />
+        <div>
+          <button id="rock" className="btn" onClick={this.onClickBtn('바위')}>바위</button>
+        </div>
+        <div>{result}</div>
+        <div>현재 {score}점</div>
+      </>
+    );
+  }
 ```
