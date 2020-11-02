@@ -1101,7 +1101,7 @@ export default ResponseCheck;
   
   ■ 컴포넌트가 처음 실행될때(mount) 순서
   1. context, defaultProps, state 저장
-  2. componentWillMount호출
+  2. componentWillMount호출 <-비추
       - `mount진행중이므로 props, state를 여기서 변경하면 안됨.`
       - `DOM에 접근 불가능` 
   3. render실행 DOM에 부착
@@ -1109,11 +1109,13 @@ export default ResponseCheck;
       - `DOM에 접근 가능.`
 
   ■ props가 업데이트될 때 순서 (첫번째 인자는 update이전의 props)
-  1. componentWillReceiveProps
+  1. componentWillReceiveProps <-비추
   2. shouldComponentUpdate
       - `업데이트되기 전 이므로 return false하면 render를 하지 않는다.`
       - `그래서 이 함수에서 성능최적화를 하여 쓸데없는 update를 걸러낸다.`
-  3. componentWillUpdate
+      - `얕은 props, state의 비교를 통해 성능최적화를 위해서 사용하고 렌더링 방지 목적으로 장황하고 깊게 사용하면 버그생길 확율이 크다.`
+      - `이것 보다는 PureComponent를 먼저 사용하는걸 고려하자.`
+  3. componentWillUpdate <-비추
       - `state를 변경하면 안됨. 아직 props가 업데이트 되지 않았는데 state를 변경하면 또반복되므로.`
   4. 업데이트완료 후 render
   5. componentDidUpdate
@@ -1133,7 +1135,7 @@ export default ResponseCheck;
       - `에러가 발생했을때 호출됨. 에러로깅으로 사용할 수 있음.`
       - `최상위 컴포넌트에 한 번만 넣어주면 됨.`
 
-  ■ getDerivedStateFromProps (render되기전에 호출)
+  ■ getDerivedStateFromProps ((최초마운트, 업데이트 모두)render되기 직전에 호출)
     - 새롭게 바뀐 props를 state에 넣어주고 싶을때 사용.
     - 다른 생명주기와 달리 static을 필요로 한다. 또한 내부에서 this를 사용하지 못함.
     ```javascript
@@ -1147,7 +1149,32 @@ export default ResponseCheck;
     ```
 
   ■ getSnapshotBeforeUpdate
-    - 컴포넌트 변화가 일어나기 전 DOM을 가져와....
+    - render 직후 컴포넌트 변화가 일어나기 전 DOM을 가져와 필요한 작업을 할 수 있다.
+    - 여기서 반환된 return값은 componentDidUpdate()의 인자로 전달된다.
+    - 채팅창 스크롤 위치를 미리 계산해서 전달할 수 있는 기능에 사용할 수 있다.
+    ```javascript
+    class Aaa extends React.Component {
+      getSnapshotBeforeUpdate(prevProps, prevState) {
+        // Are we adding new items to the list?
+        // Capture the scroll position so we can adjust scroll later.
+        if (prevProps.list.length < this.props.list.length) {
+          const list = this.listRef.current;
+          return list.scrollHeight - list.scrollTop;
+        }
+        return null;
+      }
+
+      componentDidUpdate(prevProps, prevState, snapshot) {
+        // If we have a snapshot value, we've just added new items.
+        // Adjust scroll so these new items don't push the old ones out of view.
+        // (snapshot here is the value returned from getSnapshotBeforeUpdate)
+        if (snapshot !== null) {
+          const list = this.listRef.current;
+          list.scrollTop = list.scrollHeight - snapshot;
+        }
+      }
+    }
+    ```
 ```javascript
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
@@ -1216,4 +1243,115 @@ export default class Basic extends Component {
     );
   }
 }
+```
+## 가위 바위 보 게임 만들기
+* 비동기 함수 안에서 바깥쪽 함수,변수를 사용하면 클로저 됨.
+```javascript
+// RSP.jsx
+import React, { Component } from 'react';
+
+// 클래스의 경우 -> constructor -> render -> ref -> componentDidMount
+// (setState/props 바뀔때) -> shouldComponentUpdate(true) -> render -> componentDidUpdate
+// 부모가 나를 없앴을 때 -> componentWillUnmount -> 소멸
+
+const rspCoords = {
+  바위: '0',
+  가위: '-142px',
+  보: '-284px',
+};
+
+const scores = {
+  가위: 1,
+  바위: 0,
+  보: -1,
+};
+
+const computerChoice = (imgCoord) => {
+  return Object.entries(rspCoords).find(function(v) {
+    return v[1] === imgCoord;
+  })[0];
+};
+
+class RSP extends Component {
+  state = {
+    result: '',
+    imgCoord: rspCoords.바위,
+    score: 0,
+  };
+
+  interval;
+
+  componentDidMount() { // 컴포넌트가 첫 렌더링된 후, 여기에 비동기 요청을 많이 해요
+    this.interval = setInterval(this.changeHand, 100);
+  }
+
+  componentWillUnmount() { // 컴포넌트가 제거되기 직전, 비동기 요청 정리를 많이 해요
+    clearInterval(this.interval);
+  }
+
+  changeHand = () => {
+    const {imgCoord} = this.state;
+    if (imgCoord === rspCoords.바위) {
+      this.setState({
+        imgCoord: rspCoords.가위,
+      });
+    } else if (imgCoord === rspCoords.가위) {
+      this.setState({
+        imgCoord: rspCoords.보,
+      });
+    } else if (imgCoord === rspCoords.보) {
+      this.setState({
+        imgCoord: rspCoords.바위,
+      });
+    }
+  };
+
+  onClickBtn = (choice) => () => {
+    const {imgCoord} = this.state;
+    clearInterval(this.interval);
+    const myScore = scores[choice];
+    const cpuScore = scores[computerChoice(imgCoord)];
+    const diff = myScore - cpuScore;
+    if (diff === 0) {
+      this.setState({
+        result: '비겼습니다!',
+      });
+    } else if ([-1, 2].includes(diff)) {
+      this.setState((prevState) => {
+        return {
+          result: '이겼습니다!',
+          score: prevState.score + 1,
+        };
+      });
+    } else {
+      this.setState((prevState) => {
+        return {
+          result: '졌습니다!',
+          score: prevState.score - 1,
+        };
+      });
+    }
+    setTimeout(() => {
+      this.interval = setInterval(this.changeHand, 100);
+    }, 1000);
+  };
+
+  render() {
+    const { result, score, imgCoord } = this.state;
+    return (
+      <>
+        <div id="computer" style={{ background: `url(https://en.pimg.jp/023/182/267/1/23182267.jpg) ${imgCoord} 0` }} />
+        <div>
+          <button id="rock" className="btn" onClick={this.onClickBtn('바위')}>바위</button>
+          <button id="scissor" className="btn" onClick={this.onClickBtn('가위')}>가위</button>
+          <button id="paper" className="btn" onClick={this.onClickBtn('보')}>보</button>
+        </div>
+        <div>{result}</div>
+        <div>현재 {score}점</div>
+      </>
+    );
+  }
+}
+export default RSP;
+
 ```
