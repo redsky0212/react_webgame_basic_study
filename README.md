@@ -1513,7 +1513,8 @@ useEffect(() => { // componentDidMount, componentDidUpdate 역할(1대1 대응�
     console.log('종료');
     clearInterval(interval.current);
   }
-}, [imgCoord]); // 두번째 인자로 뭐가 바뀔지 배열로 넣어준다.
+}, [imgCoord]); // 두번째 인자로 뭐가 바뀌었을때 실행할지 바뀐값에 대한 실행할것들만 넣어준다.
 ```
 * 훅스 방식은 전체함수가 매번 다시 실행하므로 useEffect를 매번 실행하고 return한다.
 * useEffect내부의 setInterval은 따지고 보면 매번실행하고 매번 clearInterval하므로 SetTimeout으로 실행한것도 다를바 없다.
+* class방식일때 componentDidMount에서 state를 if로 처리한 부분을 useEffect를 여러번 써서 사용할 수도 있다.
