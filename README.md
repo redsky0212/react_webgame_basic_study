@@ -1518,3 +1518,8 @@ useEffect(() => { // componentDidMount, componentDidUpdate 역할(1대1 대응�
 * 훅스 방식은 전체함수가 매번 다시 실행하므로 useEffect를 매번 실행하고 return한다.
 * useEffect내부의 setInterval은 따지고 보면 매번실행하고 매번 clearInterval하므로 SetTimeout으로 실행한것도 다를바 없다.
 * class방식일때 componentDidMount에서 state를 if로 처리한 부분을 useEffect를 여러번 써서 사용할 수도 있다.
+
+## useLayoutEffect()
+* 브라우저가 화면을 그리기 이전에 호출된다.
+* SSR일때 문제가 될 수도 있다.
+* useEffect에 문제가 있을때 차선책으로 useLayoutEffect를 고려하도록 한다.
