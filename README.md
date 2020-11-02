@@ -1360,6 +1360,7 @@ export default RSP;
 ## 고차함수
 * jsx부분에 함수호출내부에 함수를 호출하는부분이 있다면 바깥으로 빼서 적용한다.
 ```javascript
+// 기존코드==============================================================
   onClickBtn = (choice) => {
     //event.preventDefault(); event를 쓸 수 없음.
   }
@@ -1376,7 +1377,7 @@ export default RSP;
       </>
     );
   }
-  // 수정코드
+  // 수정코드===========================================================
   onClickBtn = (choice) => (event) => {
     event.preventDefault();
   }
