@@ -1660,6 +1660,10 @@ const Ball = memo(({ number }) => {
 export default Ball;
 ```
 ## 로또추첨기 Hooks로 교체
+* useEffect, useMemo, useCallback의 사용 익히기.
+  - useEffect의 두번째 인자 []가 비어있으면 componentDidMount역할
+  - useEffect의 두번째 인자 []가 값이 있으면 componentDidMount, componentDidUpdate모두수행.
+    - 값이 바뀐걸 판단하는건 대상 변수 자체가 바뀌었을때를 체크한다. 변수 내부 아이템이 변경되는건 바뀐걸 체크하지 않는다.
 ```javascript
 import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import Ball from './Ball';
@@ -1731,3 +1735,18 @@ const Lotto = () => {
 };
 export default Lotto;
 ```
+* `useMemo사용`
+* (이슈체크)Hooks로 변경했을때 함수 전체가 다시실행되므로 getWinNumbers도 매번 호출된다.(문제점)
+  - (이전소스)
+  ```javascript
+  // getWinNumbers를 사용한곳
+  const [winNumbers, setWinNumbers] = useState(getWinNumbers());
+  ```
+  - useMemo로 한번 셋팅한 값 기억하고 유지하는 방법
+  ```javascript
+  // getWinNumbers를 호출하여 셋팅한 값을 useMemo를 사용함으로써 값을 기억하고 다시 getWinNumbers함수를 호출하지 않는다.
+  // useEffect, useMemo, useCallback은 두번째 인자[]가 있다. []의 값이 변경됬을때 체크하는 인자값.
+  // 결론: useMemo()는 함수결과값 기억, useRef는 일반값 기억.
+  const lottoNumbers = useMemo(() => getWinNumbers(), []);
+  const [winNumbers, setWinNumbers] = useState(lottoNumbers);
+  ```
