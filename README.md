@@ -1530,6 +1530,9 @@ useEffect(() => { // componentDidMount, componentDidUpdate 역할(1대1 대응�
 
 ## 로또추첨기 컴포넌트
 * setTimeout사용시 주의점, 라이프사이클 사용예제, useMemo, useCallback사용법 예시
+  - 먼저 class방식으로 코딩한다.
+  - 라이프사이클 처음에는 콘솔로그를 보면서 특정 사이클 호출로 성능이슈가 없는지 보면서 하는게 좋다.
+  - 또한 react DevTools에서 쓸데없는곳이 rendering되는곳이 없는지 성능테스트 한다.
 ```javascript
 import React, { Component } from 'react';
 import Ball from './Ball';
@@ -1558,7 +1561,7 @@ class Lotto extends Component {
 
   runTimeouts = () => {
     console.log('runTimeouts'); // 얼마나 반복실행되는지 보기위한 코드.
-    const { winNumbers } = this.state;
+    const { winNumbers } = this.state;  // state, props는 구조분해해서 사용한다.
     for (let i = 0; i < winNumbers.length - 1; i++) {
       this.timeouts[i] = setTimeout(() => { // 여러번 실행
         this.setState((prevState) => {
@@ -1582,6 +1585,8 @@ class Lotto extends Component {
     console.log('로또 숫자를 생성합니다.');
   }
 
+  // 값이 업데이트된 상황에서 이전값 참조로 잘 처리 해준다.
+  // 조건문을 잘 처리하여 Redo가 됬을때만 runTimeouts를 실행하게 한다.
   componentDidUpdate(prevProps, prevState) {
     console.log('didUpdate');
     if (this.state.winBalls.length === 0) {
@@ -1599,7 +1604,9 @@ class Lotto extends Component {
     });
   }
 
-  onClickRedo = () => {
+  // 값 초기화 하고 바로 setTimeout을 실행해서 다시 실행을 해야한다. 이때 
+  // componentDidUpdate에서 처리하게끔 옮겼다.
+  onClickRedo = () => { // 한번더 누르면 값 초기화
     console.log('onClickRedo');
     this.setState({
       winNumbers: getWinNumbers(), // 당첨 숫자들
