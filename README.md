@@ -1750,3 +1750,40 @@ export default Lotto;
   const lottoNumbers = useMemo(() => getWinNumbers(), []);
   const [winNumbers, setWinNumbers] = useState(lottoNumbers);
   ```
+* `useCallback사용`
+* useCallback은 함수 자체를 기억하는것. (useMemo는 함수의 return값을 기억)
+* 함수를 따로 빼서 jsx에서 그 함수를 자주 콜해서 사용했을때 useCallback을 사용한 함수는 그 함수 자체를 기억하므로 매번 생성되지 않는다.(성능에 좋음)
+  - (중요) useCallback을 사용했을때 너무 기억이 강해서 변경되어야할 값들이 항상 같을 수 있다.
+  - 이때~! useCallback의 두번째 인자 []에 변경됐을때 수행할 값을 넣어줘서 실행하면 그 값으 변화된 값으로 함수가 수행된다.(중요)
+* (중요) 자식컴포넌트에 props로 함수를 넘길때는 반드시 useCallback을 사용한다.
+  - 자식컴포넌트는 넘겨받은 함수가 매번 바뀌므로 매번 다시 생성해서 받아들인다.
+```javascript
+const onClickRedo = useCallback(() => {
+  console.log('onClickRedo');
+  console.log(winNumbers);
+  setWinNumbers(getWinNumbers());
+  setWinBalls([]);
+  setBonus(null);
+  setRedo(false);
+  timeouts.current = [];
+}, [winNumbers]);
+
+return (
+  <>
+    <div>당첨 숫자</div>
+    <div id="결과창">
+      {winBalls.map((v) => <Ball key={v} number={v} />)}
+    </div>
+    <div>보너스!</div>
+    {bonus && <Ball number={bonus} onClick={onClickRedo} />}
+    {redo && <button onClick={onClickRedo}>한 번 더!</button>}
+  </>
+);
+```
+
+## Hooks관련 중요 팁
+* hooks는 절대 조건문 안에 넣으면 안됨.
+  - 실행 순서가 확실해야함.
+* 되도록이면 함수, 반복문 안에도 넣지 않는게 좋음.
+* useMemo()는 함수결과값 기억, useRef는 일반값 기억, useCallback은 함수 자체를 기억.
+* 자식컴포넌트에 props로 함수를 넘길때는 무조건 useCallback사용.
