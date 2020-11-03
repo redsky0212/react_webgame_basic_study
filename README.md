@@ -1789,3 +1789,20 @@ return (
 * 자식컴포넌트에 props로 함수를 넘길때는 무조건 useCallback사용.
 * useEffect는 여러번 써도 된다.
   - class에서는 componentDidUpdate에서 한번에 조건문으로 할 수 있으나 useEffect에서는 여러번 나눠서 사용한다.
+* ajax같은걸 update에서만 사용하고 싶을때는
+```javascript
+const mounted = useRef(false);
+// mount
+useEffect(() => {
+
+}, []);
+
+// update
+useEffect(() => {
+  if (!mounted.current) { // 처음엔 ajax를 하지 않기 위해
+    mounted.current = true;
+  } else {  // 이 후 update될때는 ajax실행
+    // ajax
+  }
+}, [바뀌는값]);
+```
