@@ -1788,3 +1788,4 @@ return (
 * useMemo()는 함수결과값 기억, useRef는 일반값 기억, useCallback은 함수 자체를 기억.
 * 자식컴포넌트에 props로 함수를 넘길때는 무조건 useCallback사용.
 * useEffect는 여러번 써도 된다.
+  - class에서는 componentDidUpdate에서 한번에 조건문으로 할 수 있으나 useEffect에서는 여러번 나눠서 사용한다.
