@@ -1527,3 +1527,128 @@ useEffect(() => { // componentDidMount, componentDidUpdate 역할(1대1 대응�
 * 브라우저가 화면을 그리기 이전에 호출된다.
 * SSR일때 문제가 될 수도 있다.
 * useEffect에 문제가 있을때 차선책으로 useLayoutEffect를 고려하도록 한다.
+
+## 로또추첨기 컴포넌트
+* setTimeout사용시 주의점, 라이프사이클 사용예제, useMemo, useCallback사용법 예시
+```javascript
+import React, { Component } from 'react';
+import Ball from './Ball';
+
+function getWinNumbers() {
+  console.log('getWinNumbers');
+  const candidate = Array(45).fill().map((v, i) => i + 1);
+  const shuffle = [];
+  while (candidate.length > 0) {
+    shuffle.push(candidate.splice(Math.floor(Math.random() * candidate.length), 1)[0]);
+  }
+  const bonusNumber = shuffle[shuffle.length - 1];
+  const winNumbers = shuffle.slice(0, 6).sort((p, c) => p - c);
+  return [...winNumbers, bonusNumber];
+}
+
+class Lotto extends Component {
+  state = {
+    winNumbers: getWinNumbers(), // 당첨 숫자들
+    winBalls: [],
+    bonus: null, // 보너스 공
+    redo: false,
+  };
+
+  timeouts = [];
+
+  runTimeouts = () => {
+    console.log('runTimeouts'); // 얼마나 반복실행되는지 보기위한 코드.
+    const { winNumbers } = this.state;
+    for (let i = 0; i < winNumbers.length - 1; i++) {
+      this.timeouts[i] = setTimeout(() => { // 여러번 실행
+        this.setState((prevState) => {
+          return {
+            winBalls: [...prevState.winBalls, winNumbers[i]],
+          };
+        });
+      }, (i + 1) * 1000);
+    }
+    this.timeouts[6] = setTimeout(() => {
+      this.setState({
+        bonus: winNumbers[6],
+        redo: true,
+      });
+    }, 7000);
+  };
+
+  componentDidMount() {
+    console.log('didMount');
+    this.runTimeouts();
+    console.log('로또 숫자를 생성합니다.');
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    console.log('didUpdate');
+    if (this.state.winBalls.length === 0) {
+      this.runTimeouts();
+    }
+    if (prevState.winNumbers !== this.state.winNumbers) {
+      console.log('로또 숫자를 생성합니다.');
+    }
+  }
+
+  componentWillUnmount() {
+    // setTimeout, setInterval사용시 반드시 Unmount에서 삭제 해줘야 한다.
+    this.timeouts.forEach((v) => {
+      clearTimeout(v);
+    });
+  }
+
+  onClickRedo = () => {
+    console.log('onClickRedo');
+    this.setState({
+      winNumbers: getWinNumbers(), // 당첨 숫자들
+      winBalls: [],
+      bonus: null, // 보너스 공
+      redo: false,
+    });
+    this.timeouts = [];
+  };
+
+  render() {
+    const { winBalls, bonus, redo } = this.state;
+    return (
+      <>
+        <div>당첨 숫자</div>
+        <div id="결과창">
+          {winBalls.map((v) => <Ball key={v} number={v} />)}
+        </div>
+        <div>보너스!</div>
+        {bonus && <Ball number={bonus} />}
+        {redo && <button onClick={this.onClickRedo}>한 번 더!</button>}
+      </>
+    );
+  }
+}
+export default Lotto;
+// Ball.jsx=========================================================
+// 자식 컴포넌트는 되도록이면 PureComponent로 작업한다.
+// 특별한 데이터를 사용하지 않으면 그냥 함수 컴포넌트로 바로 작업해도 됨.
+import React, { memo } from 'react';
+
+const Ball = memo(({ number }) => {
+  let background;
+  if (number <= 10) {
+    background = 'red';
+  } else if (number <= 20) {
+    background = 'orange';
+  } else if (number <= 30) {
+    background = 'yellow';
+  } else if (number <= 40) {
+    background = 'blue';
+  } else {
+    background = 'green';
+  }
+
+  return (
+    <div className="ball" style={{ background }}>{number}</div>
+  )
+});
+
+export default Ball;
+```
