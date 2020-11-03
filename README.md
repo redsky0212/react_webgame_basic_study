@@ -1787,3 +1787,4 @@ return (
 * 되도록이면 함수, 반복문 안에도 넣지 않는게 좋음.
 * useMemo()는 함수결과값 기억, useRef는 일반값 기억, useCallback은 함수 자체를 기억.
 * 자식컴포넌트에 props로 함수를 넘길때는 무조건 useCallback사용.
+* useEffect는 여러번 써도 된다.
