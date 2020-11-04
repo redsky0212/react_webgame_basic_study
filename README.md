@@ -2076,3 +2076,27 @@ export default TicTacToe;
 * state는 비동기로 값이 바뀌니까 바꾸고 바로 아래라인에서 console을 찍으면 아직 바뀌지 않은 상태이다.
   - 그래서 이럴때 useEffect를 사용하여 코딩한다.
   - 바뀐값을 useEffect의 두번째 인자로 체크하기 위한 recentCell값을 만들어 체크하였다.
+
+## rendering관련하여 성능 최적화 진행
+* devTools를 이용하며 체크한다.
+* 렌더링이 많이 발생할때 어떤state때문에 이런 렌더링이 발생하는지 체크하는 팁.
+```javascript
+const ref = useRef([]);// 빈배열의 ref를 만든다.
+useEffect(()=>{
+  // 이렇게 해서 어떤게 바뀌고 어떤게 안바뀌는지 알 수 있음.
+  // 성능최적화를 위해 우선 바뀌는값 파악을 위한 임시코딩.
+  console.log(rowIndex===ref.current[0], cellIndex===ref.current[1], dispatch===ref.current[2], cellData===ref.current[3]);
+  ref.current = [rowIndex, cellIndex, dispatch, cellData];
+}, [rowIndex, cellIndex, dispatch, cellData]); // 의심가는 state를 모두 넣어준다.
+```
+* useMemo는 값을 기억하는건데 콤포넌트를 그릴때 컴포넌트를 기억할 수도 있다.
+```javascript
+return (
+  <tr>
+    useMemo(
+      () => <Td key={i} dispatch={dispatch} rowIndex={rowIndex} cellIndex={i} cellData={rowData[i]}>{''}</Td>,
+      [rowData[i]], // 로우데이터가 바뀌었을때만 새로 그린다.
+    )
+  </tr>
+)
+```
