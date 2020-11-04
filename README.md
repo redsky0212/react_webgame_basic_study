@@ -2090,7 +2090,7 @@ useEffect(()=>{
 }, [rowIndex, cellIndex, dispatch, cellData]); // 의심가는 state를 모두 넣어준다.
 ```
 * useMemo는 값을 기억하는건데 콤포넌트를 그릴때 컴포넌트를 기억할 수도 있다.
-  - 우선 `React.memo`를 각각 자식 컴포넌트에 적용해 보고 그래도 문제가 있으면 아래처럼 차선책으로 해본다.
+  - 우선 `React.memo`를 각각 자식 컴포넌트에 적용해 보고 그래도 문제가 있으면 아래처럼 차선책으로 useMemo를 사용해본다.
   - 리랜더링은 자식에서 부모로 전파 되므로 사실 최상위컴포넌트는 의미가 없을 수도 있다.
 ```javascript
 return (
@@ -2102,3 +2102,5 @@ return (
   </tr>
 )
 ```
+
+## Context API 소개 (지뢰찾기)
