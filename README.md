@@ -2024,8 +2024,8 @@ const [state, dispatch] = useReducer(reducer, initialState);
   - state는 직접 바꾸지 않고 action -> reducer -> state 와 같은 흐름으로 state값을 바꾼다.
   - action의 type명은 보통 대문자로 한다.
   - Array의 fill, map, reduce등과 같은 메서드 알필요있음.
-  - 여기서 문제는 dispatch를 사용하는 곳까지(자식의 자식의 자식...) props로 넘겨줘야한다. 
-    - 그래서 나중에 이부분에 context api를 사용한다.
+  - `여기서 문제는 dispatch를 사용하는 곳까지(자식의 자식의 자식...) props로 넘겨줘야한다.`
+    - `그래서 나중에 이부분에 context api를 사용한다.`
 ```javascript
 // 초기 state값 셋팅
 const initialState = {
