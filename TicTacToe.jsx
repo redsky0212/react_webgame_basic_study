@@ -50,7 +50,7 @@ const reducer = (state, action) => {
           ['', '', ''],
           ['', '', ''],
         ],
-        recentCell: [-1, -1],
+        recentCell: [-1, -1], // 바뀐값을 기억하기 위함 (useEffect에서 사용하기 위해)
       };
     }
     default:

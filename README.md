@@ -1867,7 +1867,7 @@ const reducer = (state, action) => {
           ['', '', ''],
           ['', '', ''],
         ],
-        recentCell: [-1, -1],
+        recentCell: [-1, -1],// 바뀐값을 기억하기 위함 (useEffect에서 사용하기 위해)
       };
     }
     default:
@@ -2008,7 +2008,7 @@ const initialState = {
     ['', '', ''],
     ['', '', ''],
   ],
-  recentCell: [-1, -1],
+  recentCell: [-1, -1],// 바뀐값을 기억하기 위함 (useEffect에서 사용하기 위해)
 };
 
 // reducer에서 state를 어떤식으로 바꿀지를 적어준다.
@@ -2073,3 +2073,6 @@ const TicTacToe = () => {
 export default TicTacToe;
 ```
 ## 계속 틱택토 컴포넌트 완성하기.
+* state는 비동기로 값이 바뀌니까 바꾸고 바로 아래라인에서 console을 찍으면 아직 바뀌지 않은 상태이다.
+  - 그래서 이럴때 useEffect를 사용하여 코딩한다.
+  - 바뀐값을 useEffect의 두번째 인자로 체크하기 위한 recentCell값을 만들어 체크하였다.
