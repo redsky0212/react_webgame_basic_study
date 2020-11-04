@@ -2072,3 +2072,4 @@ const TicTacToe = () => {
 };
 export default TicTacToe;
 ```
+## 계속 틱택토 컴포넌트 완성하기.
