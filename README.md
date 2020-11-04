@@ -1806,3 +1806,265 @@ useEffect(() => {
   }
 }, [바뀌는값]);
 ```
+
+## useReducer 소개 (틱택토)
+* redux의 reducer를 가져왔다고 생각하면 됨.
+* 소규모 앱 에서는 useReducer와 context api로 사용할 수는 있으나 대규모 앱 에서는 아무래도 redux를 사용하지 않고서는 힘들다.
+
+* TicTacToe.jsx, Table.jsx, Tr.jsx, Td.jsx 파일 생성
+
+```javascript
+// TicTacToe.jsx==========================================
+import React, { useEffect, useReducer, useCallback } from 'react';
+import Table from './Table';
+
+const initialState = {
+  winner: '',
+  turn: 'O',
+  tableData: [
+    ['', '', ''],
+    ['', '', ''],
+    ['', '', ''],
+  ],
+  recentCell: [-1, -1],
+};
+
+export const SET_WINNER = 'SET_WINNER';
+export const CLICK_CELL = 'CLICK_CELL';
+export const CHANGE_TURN = 'CHANGE_TURN';
+export const RESET_GAME = 'RESET_GAME';
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case SET_WINNER:
+      // state.winner = action.winner; 이렇게 하면 안됨.
+      return {
+        ...state,
+        winner: action.winner,
+      };
+    case CLICK_CELL: {
+      const tableData = [...state.tableData];
+      tableData[action.row] = [...tableData[action.row]]; // immer라는 라이브러리로 가독성 해결
+      tableData[action.row][action.cell] = state.turn;
+      return {
+        ...state,
+        tableData,
+        recentCell: [action.row, action.cell],
+      };
+    }
+    case CHANGE_TURN: {
+      return {
+        ...state,
+        turn: state.turn === 'O' ? 'X' : 'O',
+      };
+    }
+    case RESET_GAME: {
+      return {
+        ...state,
+        turn: 'O',
+        tableData: [
+          ['', '', ''],
+          ['', '', ''],
+          ['', '', ''],
+        ],
+        recentCell: [-1, -1],
+      };
+    }
+    default:
+      return state;
+  }
+};
+
+const TicTacToe = () => {
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const { tableData, turn, winner, recentCell } = state;
+  // const [winner, setWinner] = useState('');
+  // const [turn, setTurn] = useState('O');
+  // const [tableData, setTableData] = useState([['', '', ''], ['', '', ''], ['', '', '']]);
+
+  const onClickTable = useCallback(() => {
+    dispatch({ type: SET_WINNER, winner: 'O' });
+  }, []);
+
+  useEffect(() => {
+    const [row, cell] = recentCell;
+    if (row < 0) {
+      return;
+    }
+    let win = false;
+    if (tableData[row][0] === turn && tableData[row][1] === turn && tableData[row][2] === turn) {
+      win = true;
+    }
+    if (tableData[0][cell] === turn && tableData[1][cell] === turn && tableData[2][cell] === turn) {
+      win = true;
+    }
+    if (tableData[0][0] === turn && tableData[1][1] === turn && tableData[2][2] === turn) {
+      win = true;
+    }
+    if (tableData[0][2] === turn && tableData[1][1] === turn && tableData[2][0] === turn) {
+      win = true;
+    }
+    console.log(win, row, cell, tableData, turn);
+    if (win) { // 승리시
+      dispatch({ type: SET_WINNER, winner: turn });
+      dispatch({ type: RESET_GAME });
+    } else {
+      let all = true; // all이 true면 무승부라는 뜻
+      tableData.forEach((row) => { // 무승부 검사
+        row.forEach((cell) => {
+          if (!cell) {
+            all = false;
+          }
+        });
+      });
+      if (all) {
+        dispatch({ type: SET_WINNER, winner: null });
+        dispatch({ type: RESET_GAME });
+      } else {
+        dispatch({ type: CHANGE_TURN });
+      }
+    }
+  }, [recentCell]);
+
+  return (
+    <>
+      <Table onClick={onClickTable} tableData={tableData} dispatch={dispatch} />
+      {winner && <div>{winner}님의 승리</div>}
+    </>
+  )
+};
+export default TicTacToe;
+
+// Table.jsx=================================================
+import React from 'react';
+import Tr from './Tr';
+
+const Table = ({ tableData, dispatch }) => {
+  return (
+    <table>
+      <tbody>
+        {Array(tableData.length).fill().map((tr, i) => (
+          <Tr key={i} dispatch={dispatch} rowIndex={i} rowData={tableData[i]} />
+        ))}
+      </tbody>
+    </table>
+  );
+};
+
+export default Table;
+
+// Tr.jsx====================================================
+import React, { memo } from 'react';
+import Td from './Td';
+
+const Tr = memo(({ rowData, rowIndex, dispatch }) => {
+  console.log('tr rendered');
+  return (
+    <tr>
+      {Array(rowData.length).fill().map((td, i) => (
+        <Td key={i} dispatch={dispatch} rowIndex={rowIndex} cellIndex={i} cellData={rowData[i]}>{''}</Td>
+      ))}
+    </tr>
+  );
+});
+
+export default Tr;
+
+// Td.jsx=====================================================
+import React, { useCallback, memo } from 'react';
+import { CLICK_CELL } from './TicTacToe';
+
+const Td = memo(({ rowIndex, cellIndex, dispatch, cellData }) => {
+  console.log('td rendered');
+
+  const onClickTd = useCallback(() => {
+    console.log(rowIndex, cellIndex);
+    if (cellData) {
+      return;
+    }
+    dispatch({ type: CLICK_CELL, row: rowIndex, cell: cellIndex });
+  }, [cellData]);
+
+  return (
+    <td onClick={onClickTd}>{cellData}</td>
+  )
+});
+
+export default Td;
+```
+* state는 최상단 컴포넌트(TicTacToe)에 있고 이벤트가 발생하는곳은 Td컴포넌트이다.
+  - 많이 떨어져있는 부모자식 관계 구조이다.
+  - 이런구조를 해결을 위해 context api를 사용하기도 함.
+* 많은 state를 관리하기 위하여 useReducer를 사용.
+  - 아래와 같이 많은 state를 reducer로 옮겨 관리한다.
+  - reducer의 하나에 통일되서 관리가 된다.
+```javascript
+// 초기 state값 셋팅
+const initialState = {
+  winner: '',
+  turn: 'O',
+  tableData: [
+    ['', '', ''],
+    ['', '', ''],
+    ['', '', ''],
+  ],
+  recentCell: [-1, -1],
+};
+
+// reducer에서 state를 어떤식으로 바꿀지를 적어준다.
+const reducer = (state, action) => {};
+
+const [state, dispatch] = useReducer(reducer, initialState);
+  const { tableData, turn, winner, recentCell } = state;
+  // const [winner, setWinner] = useState('');
+  // const [turn, setTurn] = useState('O');
+  // const [tableData, setTableData] = useState([['', '', ''], ['', '', ''], ['', '', '']]);
+```
+* reducer사용
+  - state는 직접 바꾸지 않고 action -> reducer -> state 와 같은 흐름으로 state값을 바꾼다.
+  - action의 type명은 보통 대문자로 한다.
+  - Array의 fill, map, reduce등과 같은 메서드 알필요있음.
+```javascript
+// 초기 state값 셋팅
+const initialState = {
+  winner: '',
+  turn: 'O',
+  tableData: [
+    ['', '', ''],
+    ['', '', ''],
+    ['', '', ''],
+  ],
+  recentCell: [-1, -1],
+};
+
+// reducer에서 state를 어떤식으로 바꿀지를 적어준다.
+const reducer = (state, action) => {
+  // 액션 타입에 따라 값들은 적용하는 로직이 들어간다.
+  switch (action.type) {
+    case SET_WINNER:
+      // state.winner = action.winnner; 이렇게 넣으면 절대 안됨.
+      return {...state, winner: action.winner};
+  }
+};
+
+const TicTacToe = () => {
+  const [state, dispatch] = useReducer(reducer, initialState);
+
+  // 컴포넌트에 넣어줄 함수 이므로 useCallback으로 묶어준다.
+  const onClickTable = useCallback(() => {
+    // 리듀서의 dispatch를 사용하여 state의 값을 사용해보자.
+    // 인자로 넘겨주는action객체, type은 리듀서의 액션type명을 넣어준다.
+    // 두번째로 원하는state명에 값을 넣어준다.
+    dispatch({type: 'SET_WINNER', winner: 'O'}); // 액션역할
+  });
+
+  return (
+    <>
+      <Table onClick={onClickTable} />
+      {/*useReducer의 state에 들어있으므로 구조분해된 state. 이렇게 쓴다.*/}
+      {state.winner && <div>{state.winner}님의 승리</div>}
+    </>
+  );
+};
+export default TicTacToe;
+```
