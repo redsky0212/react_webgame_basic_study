@@ -2104,3 +2104,55 @@ return (
 ```
 
 ## Context API 소개 (지뢰찾기)
+* 부모 자식 관계
+  - MineSearch -> Form, Table -> Tr -> Td
+  - MineSearch에 context API를 설정하면 그 아래 모든 자식에서 바로 사용할 수 있는것 만들기.
+* 우선 최상단 부모인 MineSearch컴포넌트에 Context를 설정한다.
+```javascript
+import React, {createContext, useMemo} from 'react'; // createContext를 가져온다.
+
+// context를 하나 만든다.
+// createContext함수에 인자로 초기 기본값을 넣어줄 수 있다.(type만 맞춰준다.)
+// 만들어진 TableContext는 다른 파일에서 사용할 수 있게 export해준다.
+export const TableContext = createContext({
+  tableData: [],
+  dispatch: () => {},
+});
+
+// 리듀서로 담겨있는 state
+const [state, dispatch] = useReducer(reducer, initialState);
+
+// render return부분의 jsx에 자식 컴포넌트에서 context로 접근하고자 하는 컴포넌트를 TableContext.Provider로 묶어준다.
+// 그리고 넘겨질 값들은 value속성에 객체로 넘겨준다.
+// <TableContext.Provider value={{ tableData: state.tableData, dispatch }}>
+// 중요 : value에 들어가는 값은 위 처럼 그냥 넣으면 안되고 반드시 캐싱해서 넣어줘야한다.(useMemo)
+// ---- value에 값을 바로 객체로 넣어주면 매번 새로 생성되며, 자식컴포넌트에서도 매번 render된다.
+// ---- 그래서 최종 아래 소스처럼 useMemo로 묶어서 값을 캐싱해준다.
+// ---- dispatch는 값변화가 없기 때문에 변화값인자로 안넣어준다.
+const value = useMemo(() => ({ tableData: state.tableData, dispatch }), [state.tableData]);
+
+return (
+  <TableContext.Provider value={value}>
+    <Form />
+    <div>{state.timer}</div>
+    <Table />
+    <div>{state.result}</div>
+  </TableContext.Provider>
+);
+```
+* 위에서 부모컴포넌트에서 설정된 context API를 자식 컴포넌트에서 사용하는 부분
+```javascript
+// useContext를 가져온다.
+import React, {useContext} from 'react';
+// 부모에서 export한 context API인 'TableContext'를 가져온다.
+import { TableContext } from './MineSearch';
+// 가져온 TableContext를 useContext함수 인자로 넣어서 생성한다.
+// 여기에는 부모컴포넌트에서 넣어줬던 값들을 그대로 구조분해 해서 바로 쓸 수 있다.
+const { dispatch } = useContext( TableContext );
+
+// dispatch를 사용하여 액션을 사용하는 부분.
+const onClickBtn = useCallback(() => {
+  dispatch({ type:START_GAME, row, cell, mine });
+}, [row, cell, mine]);
+
+```
