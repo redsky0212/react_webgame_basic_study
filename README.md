@@ -2156,3 +2156,34 @@ const onClickBtn = useCallback(() => {
 }, [row, cell, mine]);
 
 ```
+
+## context API사용한 컴포넌트 최적화하기
+* 중요: 개발 후 최적화는 필수 사항이므로 최적화를 해준다.
+  - memo, useMemo, useCallback 를 적절히 사용해야한다.
+* context API를 쓰면 기본적으로 최적화가 힘들 수 있다.
+  - context API를 사용한 자식 컴포넌트는 비록 호출이 되더라도 아래와 같이 최적화를 하면 render는 하지 않게 적용할 수도있다. (console.log를 찍어 직접 확인하는 습관을 들이자.)
+```javascript
+// 이렇게 return부분을 useMemo로 묶어줄 수도있다.
+return useMemo(() => {
+  <td 
+    style={getTdStyle(tableData[rowIndex][cellIndex])} 
+    onClick={onClickTd}
+    onContextMenu={onRightClickTd}
+  >
+    {getTdText(tableData[rowIndex][cellIndex])}
+  </td>
+}, [tableData[rowIndex][cellIndex]]);
+// 어떤땐 아래와 같이 따로 콤포넌트로 빼는게 더 효율적일 수도있다.
+return <RealTd onClickTd={onClickTd} onRightClickTd={onRightClickTd} data={tableData[rowIndex][cellIndex]} />;
+
+const RealTd = memo(({ onClickTd, onRightClickTd, data}) => {
+  console.log('real td rendered');
+  return (
+    <td
+      style={getTdStyle(data)}
+      onClick={onClickTd}
+      onContextMenu={onRightClickTd}
+    >{getTdText(data)}</td>
+  )
+});
+```
