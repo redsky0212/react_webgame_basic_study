@@ -695,6 +695,7 @@ class Aaa extends Component {
 ```
 
 ## NumberBaseball Hooks방식으로 전환해보기
+* useState로 state를 초기화 하는 시점에 값을 셋팅할 때 만약 값이 함수라면 함수를 호출하지 말고 lazy init을 사용한다. (아래 코드 참조)
 ```javascript
 import React, {useRef, useState} from 'react';
 import Try from './Try';
@@ -712,7 +713,10 @@ function getNumbers() { // 숫자 네 개를 겹치지 않고 랜덤하게 뽑�
 const NumberBaseballHooks = () => {
   const [result, setResult] = useState('');
   const [value, setValue] = useState('');
-  const [answer, setAnswer] = useState(getNumbers());
+  // Hooks방식에서는 state가 바뀌면 함수 전체가 다시 render되므로 아래 getNumbers()함수를
+  // 쓸데없이 매번 호출하게 되므로 아래와 같이 넣으면 안됨
+  // const [answer, setAnswer] = useState(getNumbers());  // getNumbers 함수명만 넣어줘야함.
+  const [answer, setAnswer] = useState(getNumbers); // lazy init(초기에 한번만 초기화 하면 되므로)
   const [tries, setTries] = useState([]);
   const inputRef = useRef(null);
 
