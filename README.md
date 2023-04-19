@@ -384,49 +384,61 @@ module.exports = WordRelay;
 * 설치 되었으면 package.json scripts부분을 수정한다.
 ```javascript
 "scripts": {
-  "dev": "webpack-dev-server --hot",
-}
+  "dev": "webpack serve --env development"
+},
 ```
   - webpack-dev-server가 webpack.config.js 읽어서 빌드해주고 뒤쪽에서 항상 서버로 유지를 시켜준다.
   - webpack-dev-server를 실행했을때 버전때문에 에러가 발생하였다. 그래서 아래와 같이 버전을 맞춰 다시 설치하고 실행하니 되었다.
-    - "webpack": "^4.30.0", "webpack-cli": "^3.3.0", "webpack-dev-server": "^3.3.1"
-    - 최신 버전에는 약간의 문제가 있는듯 하다.
-  - webpack-dev-server는 최신 공신문서를 확인하여 hot-loader를 사용할 것인지, 아니면 사용방법을 그때그때 따라서 진행해야할거같음.
+  - Webpack버번이 바뀜에 따라 항상 설정내용이 바뀌고 있다. 그때그때 바뀐 내용을 강좌로 확인해야할것 같음.
+  ```js
+  // 2023 package.json파일의 아래 내용
+  "react-refresh": "^0.11.0",
+  "webpack": "^5.3.2",
+  "webpack-cli": "^4.1.0",
+  "webpack-dev-server": "^4.0.0"
+  ```
+
 * 추가로 client.jsx를 아래와 같이 수정
 ```javascript
-const React = require('react');
-const ReactDom = require('react-dom');
-const { hot } = require('react-hot-loader/root'); // hot을 불러와서
+import React from 'react';
+import ReactDom from 'react-dom';
+import WordRelay from './WordRelay';
 
-const WordRelay = require('./WordRelay');
-
-const Hot = hot(WordRelay); // WordRelay를 연결시킨다.
-
-ReactDom.render(<Hot />, document.querySelector('#root'));
+ReactDom.render(<WordRelay />, document.querySelector('#root'));
 ```
 * 또 webpack.config.js도 아래부분에 plugin을 추가해준다.
 ```javascript
+const RefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+
 module: {
-    rules: [{
-      test: /\.jsx?/,
-      loader: 'babel-loader',
-      options: {
-        presets: [
-          ['@babel/preset-env', {
-            targets: {
-              browsers: ['> 5% in KR', 'last 2 chrome versions'],
-            },
-            debug: true,
-          }],
-          '@babel/preset-react'
-        ],
-        plugins: [
-          '@babel/plugin-proposal-class-properties',
-          'react-hot-loader/babel', // 리엑트 hot-loader를 연결한다.
-        ],
-      },
-    }],
-  },
+  rules: [{
+    test: /\.jsx?/,
+    loader: 'babel-loader',
+    options: {
+      presets: [
+        ['@babel/preset-env', {
+          targets: {
+            browsers: ['> 5% in KR', 'last 2 chrome versions'],
+          },
+          debug: true,
+        }],
+        '@babel/preset-react'
+      ],
+      plugins: [
+        '@babel/plugin-proposal-class-properties',
+        'react-refresh/babel', // 리엑트 refresh사용
+      ],
+    },
+  }],
+},
+plugins: [
+  new RefreshWebpackPlugin()  // 그냥 reloading이 아니라 hot reloading시켜주므로 데이타가 남아있게 처리
+],
+devServer: {
+  devMiddleware: { publicPath: '/dist' },
+  static: { directory: path.resolve(__dirname) },
+  hot: true
+}
 ```
 * 또한 index.html에 script로딩한 app.js경로를 ./dist/app.js에서 ./app.js로 수정한다.
   - 이부분은 webpack-dev-server가 실행하면서 빌드된 app.js를 읽지않고 따로 app.js를 만들어 읽는거 같음.
@@ -488,6 +500,23 @@ module.exports = WordRelayHooks;
 * jsx에 className, htmlFor적용하는법
   - jsx소스내에 class대신 className을 사용한다.
   - jsx소스내에 for속성 대신 htmlFor를 사용한다.
+## 컨트롤드 인풋 vs 언컨트롤드 인풋
+---
+* 컨트롤드 인풋
+```html
+// value와 onChange가 셋팅 되어있는 형태(react에서 권장)
+<input
+  ref={inputEl}
+  value={value}
+  onChange={(e: ChangeEvent<HTMLInputElement>) => setValue(e.currentTarget.value)}
+/>
+```
+* 언컨트롤드 인풋
+```html
+// value, onChange가 없는 형태(간단한 앱에서 주로 사용)
+<input ref={inputEl} />
+```
+:star: 참조 : https://goshacmd.com/controlled-vs-uncontrolled-inputs-react/
 
 ## import와 require 비교
 * 많은 소스들이 require대신 import를 쓴다.
