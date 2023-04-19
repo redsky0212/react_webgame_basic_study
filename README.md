@@ -389,7 +389,7 @@ module.exports = WordRelay;
 ```
   - webpack-dev-server가 webpack.config.js 읽어서 빌드해주고 뒤쪽에서 항상 서버로 유지를 시켜준다.
   - webpack-dev-server를 실행했을때 버전때문에 에러가 발생하였다. 그래서 아래와 같이 버전을 맞춰 다시 설치하고 실행하니 되었다.
-  - Webpack버번이 바뀜에 따라 항상 설정내용이 바뀌고 있다. 그때그때 바뀐 내용을 강좌로 확인해야할것 같음.
+  - Webpack버전이 바뀜에 따라 항상 설정내용이 바뀌고 있다. 그때그때 바뀐 내용을 강좌로 확인해야할것 같음.
   ```js
   // 2023 package.json파일의 아래 내용
   "react-refresh": "^0.11.0",
