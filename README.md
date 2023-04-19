@@ -512,6 +512,7 @@ module.exports = WordRelayHooks;
 />
 ```
 * 언컨트롤드 인풋
+  - onSubmit내 에서만 사용되어질때 사용.
 ```html
 // value, onChange가 없는 형태(간단한 앱에서 주로 사용)
 <input ref={inputEl} />
