@@ -14,11 +14,17 @@
 
 // ReactDom.render(<Hot />, document.querySelector('#root'));
 
+// import React from 'react';
+// import ReactDom from 'react-dom';
+// import { hot } from 'react-hot-loader/root'; // hot을 불러와서
+// import WordRelayHooks from './ResponseCheckHooks';
+
+// const Hot = hot(WordRelayHooks); // WordRelay를 연결시킨다.
+
+// ReactDom.render(<Hot />, document.querySelector('#root'));
+
 import React from 'react';
 import ReactDom from 'react-dom';
-import { hot } from 'react-hot-loader/root'; // hot을 불러와서
-import WordRelayHooks from './ResponseCheckHooks';
+import WordRelay from './WordRelay';
 
-const Hot = hot(WordRelayHooks); // WordRelay를 연결시킨다.
-
-ReactDom.render(<Hot />, document.querySelector('#root'));
+ReactDom.render(<WordRelay />, document.querySelector('#root'));

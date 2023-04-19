@@ -4,7 +4,7 @@
   "description": "* 정적웹페이지, 동적웹페이지\r   - 정적웹페이지는 웹서버에 이미 저장되어있는 html을 전달하여 받은 단순 정보 전달 페이지이며 사용자 상호작용(user interaction)이 별로 중요하지 않는 페이지.\r   - 동적웹페이지는 유저의 행동 흐름에따라 페이지를 달리 보여주며 동적으로 변화된 html을 전달 받는 형태이고, 요즘엔 거의 이런 동적인 형태의 웹페이지들이 많아 웹페이지 보다는 웹 어플리케이션 느낌의 성격이 강하다. 이런 자연스러운 유저 인터렉션을 위하여 프론트앤드 프레임웍이 등장.\r * 리엑트의 특징\r   - 컴퍼넌트(Component) 단위 구성\r     - UI를 구성하는 개별 뷰이며 여러 컴퍼넌트를 조립하여 완성하는 형태이고 각 컴퍼넌트는 재사용성이 좋음.(생산성와 유지보수가 좋음)\r   - JSX(javascript확장구문)\r     - html과 유사한 문법으로 익숙하게 컴퍼넌트를 생성할 수 있다.(babel로 컴파일됨.)\r   - Virtual DOM\r     - 유저인터렉션 과정에 비효율적인 렌더링이 발생할 수 있는데 그것을 최소화.\r   - 데이터 사용의 편리함\r ## 컴퍼넌트(Component)만들기\r   * component는 js또는 jsx파일로 생성한다.\r     - js파일의 소스에 jsx코드가 있을경우에는 통상 .jsx확장자로 생성하여 구분한다.\r     - component는 class방식과 hooks(함수형)방식 두가지가 있다.\r     ```javascript\r     // class방식\r     class 클래스명 extends Component {\r       constructor(props) {\r         super(props);\r         this.state = {\r           test: '',\r         };\r       }\r       render() {\r         return (<div></div>);\r       };\r     }\r     // hooks방식\r     import React, {useState} from 'react';\r     const 함수명 = () => {\r       const [count, setCount] = useState(0);",
   "main": "index.js",
   "scripts": {
-    "dev": "webpack-dev-server --hot"
+    "dev": "webpack serve --env development"
   },
   "repository": {
     "type": "git",
@@ -12,23 +12,21 @@
   },
   "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/redsky0212/react_webgame_basic_study/issues"
-  },
   "homepage": "https://github.com/redsky0212/react_webgame_basic_study#readme",
   "dependencies": {
-    "react": "^17.0.0",
-    "react-dom": "^17.0.0"
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.3",
     "@babel/plugin-proposal-class-properties": "^7.12.1",
     "@babel/preset-env": "^7.12.1",
     "@babel/preset-react": "^7.12.1",
+    "@pmmmwh/react-refresh-webpack-plugin": "^0.5.10",
     "babel-loader": "^8.1.0",
-    "react-hot-loader": "^4.8.4",
-    "webpack": "^4.30.0",
-    "webpack-cli": "^3.3.0",
-    "webpack-dev-server": "^3.3.1"
+    "react-refresh": "^0.11.0",
+    "webpack": "^5.3.2",
+    "webpack-cli": "^4.1.0",
+    "webpack-dev-server": "^4.0.0"
   }
 }

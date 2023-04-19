@@ -1,4 +1,5 @@
 const path = require('path'); // node의 path조작
+const RefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
 module.exports = {
   name: 'wordrelay-setting',
@@ -29,15 +30,23 @@ module.exports = {
         ],
         plugins: [
           '@babel/plugin-proposal-class-properties', // 에러발생으로 추가 설치함.
-          'react-hot-loader/babel', // 리엑트 hot-loader를 연결한다.
+          'react-refresh/babel', // 리엑트 refresh사용
         ],
       },
     }],
   },
+  plugins: [
+    new RefreshWebpackPlugin()
+  ],
   // 출력: 중요
   output: {
     path: path.join(__dirname, 'dist'), // 현재폴더경로에 dist에 내보냄.
     filename: 'app.js',
     publicPath: '/dist/',
   },
+  devServer: {
+    devMiddleware: { publicPath: '/dist' },
+    static: { directory: path.resolve(__dirname) },
+    hot: true
+  }
 };
