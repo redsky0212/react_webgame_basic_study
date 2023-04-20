@@ -844,6 +844,17 @@ const Test = React.memo(() => {
 ```
 * 상황에 따라 shouldComponentUpdate, PureComponent, React.memo를 적절히 사용해야한다.
 * 부모가 PureComponent이면 자식에도 적용해서 최적화를 할 수 있다.
+* React.memo를 적용하면 DevTools에서 봤을때 자식 컴포넌트의 이름이 이상하게 바뀐다. 이때 자식 컴포넌트의 이름을 `displayName`으로 다시 셋팅 해줄 수 있다.
+```js
+const Try = memo(({tryInfo}) => {
+  return (
+    <li></li>
+  );
+});
+Try.displayName = 'Try';
+
+export default Try;
+```
 
 ## React.createRef
 * class방식일때 ref적용할때 hooks방식과 current부분이 다른부분이 있었다.
