@@ -912,7 +912,7 @@ Class.contextType
 Context.Consumer
 Context.displayName
 ```
-![참조URL:https://ko.reactjs.org/docs/context.html](https://ko.reactjs.org/docs/context.html)
+[참조URL:https://ko.reactjs.org/docs/context.html](https://ko.reactjs.org/docs/context.html)
 
 ## React 조건문(반응속도체크 ResponseCheck)
 * css, style은 client.jsx에 보통 하는 방식 똑같이 넣어주면 된다.
