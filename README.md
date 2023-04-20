@@ -1526,22 +1526,24 @@ export default RSP;
     };
 
     const onClickBtn = (choice) => () => {
-      clearInterval(interval.current);
-      const myScore = scores[choice];
-      const cpuScore = scores[computerChoice(imgCoord)];
-      const diff = myScore - cpuScore;
-      if (diff === 0) {
-        setResult('비겼습니다!');
-      } else if ([-1, 2].includes(diff)) {
-        setResult('이겼습니다!');
-        setScore((prevScore) => prevScore + 1);
-      } else {
-        setResult('졌습니다!');
-        setScore((prevScore) => prevScore - 1);
+      if (interval.current) { // 멈췄을 때 또 클릭하는 것 막기
+        clearInterval(interval.current);
+        const myScore = scores[choice];
+        const cpuScore = scores[computerChoice(imgCoord)];
+        const diff = myScore - cpuScore;
+        if (diff === 0) {
+          setResult('비겼습니다!');
+        } else if ([-1, 2].includes(diff)) {
+          setResult('이겼습니다!');
+          setScore((prevScore) => prevScore + 1);
+        } else {
+          setResult('졌습니다!');
+          setScore((prevScore) => prevScore - 1);
+        }
+        setTimeout(() => {
+          interval.current = setInterval(changeHand, 100);
+        }, 1000);
       }
-      setTimeout(() => {
-        interval.current = setInterval(changeHand, 100);
-      }, 1000);
     };
 
     return (
@@ -1582,7 +1584,7 @@ useEffect(() => { // componentDidMount, componentDidUpdate 역할(1대1 대응�
   - 물론 useEffect에 두개의 인자를 넣고 작업 할 수도 있음.
 
 ## 커스텀 훅으로 interval 하기
-* 두개의 훅을 커스텀으로 하나로 만들어서 작업하고자 할때.
+* 여러개의 훅을 커스텀으로 하나로 만들어서 작업하고자 할때 유용하게 사용 가능하다.
 * 예를 들어 아래코드 `interval`과 `useEffect`부분을 하나로 합친다고 했을 때.
 ```js
 const interval = useRef();
@@ -1595,14 +1597,43 @@ useEffect(() => { // componentDidMount, componentDidUpdate 역할(1대1 대응�
     clearInterval(interval.current);
   }
 }, [imgCoord]);
+
+const changeHand = () => {
+  if (imgCoord === rspCoords.바위) {
+    setImgCoord(rspCoords.가위);
+  } else if (imgCoord === rspCoords.가위) {
+    setImgCoord(rspCoords.보);
+  } else if (imgCoord === rspCoords.보) {
+    setImgCoord(rspCoords.바위);
+  }
+};
 ```
 * `useInterval`이라는 이름으로 만들 수 있을것이다.
+* `interval.current`변수도 `isRunnig`으로 교체 한다.
+```js
+const [isRunning, setIsRunning] = useState(true);
+
+useInterval(changeHand, isRunning ? 100 : null);
+
+const changeHand = () => {
+  if (imgCoord === rspCoords.바위) {
+    setImgCoord(rspCoords.가위);
+  } else if (imgCoord === rspCoords.가위) {
+    setImgCoord(rspCoords.보);
+  } else if (imgCoord === rspCoords.보) {
+    setImgCoord(rspCoords.바위);
+  }
+};
+```
+
+* useInterval 참조 함수 소스
 ```js
 import { useRef, useEffect } from 'react';
 
+// const [isRunning, setRunning] = useState(true);
 //useInterval(() => {
 //  console.log('hello');
-//}, null);
+//}, isRunning ? 1000 : null);
 
 function useInterval(callback, delay) {
   const savedCallback = useRef();
@@ -1612,6 +1643,7 @@ function useInterval(callback, delay) {
   });
 
   useEffect(() => {
+    // 이제막 들어온 최신 callback함수를 실행하게 하기 위해서 tick함수안에서 savedCallback를 호출했다.
     function tick() {
       savedCallback.current();
     }

@@ -25,6 +25,6 @@
 
 import React from 'react';
 import ReactDom from 'react-dom';
-import WordRelay from './RSP';
+import WordRelay from './LottoHooks';
 
 ReactDom.render(<WordRelay />, document.querySelector('#root'));
