@@ -844,7 +844,7 @@ const Test = React.memo(() => {
 ```
 * 상황에 따라 shouldComponentUpdate, PureComponent, React.memo를 적절히 사용해야한다.
 * 부모가 PureComponent이면 자식에도 적용해서 최적화를 할 수 있다.
-* React.memo를 적용하면 DevTools에서 봤을때 자식 컴포넌트의 이름이 이상하게 바뀐다. 이때 자식 컴포넌트의 이름을 `displayName`으로 다시 셋팅 해줄 수 있다.
+* Hooks방식일때 React.memo를 적용하면 DevTools에서 봤을때 자식 컴포넌트의 이름이 이상하게 바뀐다. 이때 자식 컴포넌트의 이름을 `displayName`으로 다시 셋팅 해줄 수 있다.
 ```js
 const Try = memo(({tryInfo}) => {
   return (
@@ -900,6 +900,18 @@ class Test extends Component{
   ```
 * class방식일때 constructor에서 props를 좀 더 필터링을 하거나 디테일 조작을 하여 state에 넣어줄 수도있다.
 * 부모자식간에는 props로 넘겨주는데 depth가 길어지면 복잡해지므로 조금 쉽게 전달하는 방식은 context api(공부필요)를 사용하면 됨.
+
+## context API
+* 컴포넌트 구조가 A -> B -> C -> D - E 와 같이 부모 자식이 깊을때 A가 중간에 다른 자식 컴포넌트를 거치지 않고 바로 최 하위의 E컴포넌트로 props를 전달 하고자 할때 사용하는 것 `context API`, 또한 `Redux`도 가능하다. 간단하게 말하면 props의 진화형이 context API라고 생각하면 됨.
+```
+API
+
+React.createContext
+Context.Provider
+Class.contextType
+Context.Consumer
+Context.displayName
+```
 
 ## React 조건문(반응속도체크 ResponseCheck)
 * css, style은 client.jsx에 보통 하는 방식 똑같이 넣어주면 된다.
